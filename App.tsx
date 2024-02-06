@@ -1,20 +1,12 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import { Start } from "./src/screens/start";
+import { ThemeProvider } from "styled-components/native"; // Certifique-se de importar o ThemeProvider correto
+import theme from "./styles/theme";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Eliel e Giovani vão fazer uma Fortuna</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider theme={theme}>
+      <Start />
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
