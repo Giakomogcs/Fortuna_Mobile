@@ -1,5 +1,5 @@
+// styles.ts
 import styled from "styled-components/native";
-import { LinearGradient } from "expo-linear-gradient";
 
 export const Container = styled.View`
   flex: 1;
@@ -12,13 +12,16 @@ export const Content = styled.View`
   justify-content: center;
 `;
 
-export const Footer = styled(LinearGradient).attrs({
-  colors: ["#3a0273", "#592d60"],
-  start: { x: 0, y: 0 },
-  end: { x: 0, y: 1 },
-})`
+export const Footer = styled.View`
   height: 100px;
   border-radius: 15px 15px 0 0;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.COLORS.BACKGROUND_FOOTER};
+`;
+
+export const FooterContent = styled.View`
+  flex-direction: row;
   align-items: center;
   justify-content: center;
 `;
