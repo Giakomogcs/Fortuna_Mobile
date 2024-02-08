@@ -4,6 +4,7 @@ const theme = {
     BACKGROUND_FOOTER: "#4E009C",
     BACKGROUND_BUTTON: "#4E009C",
     COLOR_DEFAULT: "#4E009C",
+    COLOR_FOOTER: "#4A4A4A",
     GRADIENT: "linear-gradient(to bottom, #3A0273, #592D60)",
     INPUT_BORDER: "#4E009C",
     BUTTON_BORDER: "#4E009C",

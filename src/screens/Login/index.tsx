@@ -6,6 +6,7 @@ import PasswordInput from "../../components/PasswordInput";
 import { Button } from "../../components/Button";
 import { ButtonWhite } from "../../components/ButtonWhite";
 import { HeaderSessions } from "../../components/HeaderSessions";
+import { FooterSessions } from "../../components/FooterSessions";
 
 import { Ionicons } from "@expo/vector-icons";
 
@@ -21,20 +22,21 @@ export function Login() {
           <PasswordInput title="Senha" />
         </LoginInputs>
         <Button title="Entrar" />
+        <ButtonWhite
+          title="Entrar com o Google"
+          icon={() => <Ionicons name="logo-google" size={24} color="gray" />}
+        />
+
+        <ButtonWhite
+          title="Entrar com a Apple"
+          icon={() => <Ionicons name="logo-apple" size={24} color="gray" />}
+        />
+
+        <ButtonWhite title="Criar nova conta" />
       </Content>
       <StatusBar style="auto" />
 
-      <ButtonWhite
-        title="Entrar com o Google"
-        icon={() => <Ionicons name="logo-google" size={24} color="gray" />}
-      />
-
-      <ButtonWhite
-        title="Entrar com a Apple"
-        icon={() => <Ionicons name="logo-apple" size={24} color="gray" />}
-      />
-
-      <ButtonWhite title="Criar nova conta" />
+      <FooterSessions />
     </Container>
   );
 }
