@@ -4,16 +4,25 @@ import { StyleSheet, Text, Image, View } from "react-native";
 
 interface ButtonProps {
   title?: string;
-  icon?: any; // Alteração aqui para IconType
+  icon?: React.ComponentType<IconProps>; // Altere para o tipo adequado do ícone
+  onPress?: () => void;
 }
 
-export function ButtonWhite({ title, icon, ...props }: ButtonProps) {
+// Defina o tipo para o ícone
+interface IconProps {
+  size?: number;
+  color?: string;
+}
+
+export function ButtonWhite({ title, icon: Icon, onPress }: ButtonProps) {
   return (
-    <Container {...props}>
-      {icon && <StyledIcon>{icon}</StyledIcon>}
-      {""}
-      {/* Renderiza o ícone como um componente */}
-      {title && <TitleButton>{title} </TitleButton>}
+    <Container onPress={onPress}>
+      {Icon && (
+        <StyledIcon>
+          <Icon />
+        </StyledIcon>
+      )}
+      {title && <TitleButton>{title}</TitleButton>}
     </Container>
   );
 }

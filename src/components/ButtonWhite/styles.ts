@@ -13,23 +13,23 @@ export const Container = styled.TouchableOpacity`
   background-color: ${({ theme }) => theme.COLORS.WHITE};
 
   flex-direction: row;
-  gap: 3px;
+  gap: 10px;
   align-items: center;
   justify-content: center;
+  padding: 0 20px;
 `;
 
 export const TitleButton = styled.Text`
   color: ${({ theme }) => theme.COLORS.COLOR_DEFAULT};
-  width: 100%;
-  height: 100%;
-
+  width: 90%;
   text-align: center; /* Centraliza o texto horizontalmente */
   line-height: 45px; /* Centraliza o texto verticalmente */
   font-size: 16px;
-  font-weight: bold;
+
+  line-height: 16px;
 `;
 
 export const StyledIcon = styled.View`
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
 `;

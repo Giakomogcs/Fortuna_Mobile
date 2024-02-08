@@ -7,6 +7,8 @@ import { Button } from "../../components/Button";
 import { ButtonWhite } from "../../components/ButtonWhite";
 import { HeaderSessions } from "../../components/HeaderSessions";
 
+import { Ionicons } from "@expo/vector-icons";
+
 import { FcGoogle } from "react-icons/fc";
 
 export function Login() {
@@ -21,7 +23,18 @@ export function Login() {
         <Button title="Entrar" />
       </Content>
       <StatusBar style="auto" />
-      <ButtonWhite title="Entrar" />
+
+      <ButtonWhite
+        title="Entrar com o Google"
+        icon={() => <Ionicons name="logo-google" size={24} color="gray" />}
+      />
+
+      <ButtonWhite
+        title="Entrar com a Apple"
+        icon={() => <Ionicons name="logo-apple" size={24} color="gray" />}
+      />
+
+      <ButtonWhite title="Criar nova conta" />
     </Container>
   );
 }
