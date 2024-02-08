@@ -6,8 +6,6 @@ export const Container = styled.TouchableOpacity`
   max-width: 400px;
   height: auto;
 
-  color: ${({ theme }) => theme.COLORS.COLOR_DEFAULT};
-
   flex-direction: column;
   gap: 3px;
   align-items: center;
@@ -20,7 +18,7 @@ export const Icon = styled.Image`
 `;
 
 export const HeaderText = styled.Text`
-  color: ${({ theme }) => theme.COLORS.COLOR_HEADER};
+  color: ${({ theme }) => theme.COLORS.COLOR_DEFAULT};
   width: 100%;
   font-size: 24px;
   font-weight: 600;
