@@ -30,14 +30,12 @@ export const PasswordArea = styled.View`
 `;
 
 export const TextInput = styled.TextInput`
-  margin-left: 10px;
   color: ${({ theme }) => theme.COLORS.INPUT_TEXT};
   width: 100%;
   align-items: center;
 `;
 
 export const TitleInput = styled.Text`
-  margin-left: 10px;
   color: ${({ theme }) => theme.COLORS.INPUT_TITLE};
   font-weight: bold;
 

@@ -12,7 +12,7 @@ export const Container = styled.View`
 
   flex-direction: column;
   gap: 3px;
-  align-items: center;
+  align-items: start;
   justify-content: start;
 
   padding: 8px 15px;
@@ -20,14 +20,12 @@ export const Container = styled.View`
 `;
 
 export const TextInput = styled.TextInput`
-  margin-left: 10px;
   color: ${({ theme }) => theme.COLORS.INPUT_TEXT};
   width: 100%;
   align-items: center;
 `;
 
 export const TitleInput = styled.Text`
-  margin-left: 10px;
   color: ${({ theme }) => theme.COLORS.INPUT_TITLE};
   font-weight: bold;
 

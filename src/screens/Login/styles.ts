@@ -9,22 +9,28 @@ export const Container = styled.View`
   padding: 12%;
 `;
 
-export const LoginButton = styled.TouchableOpacity`
-  width: 282px;
-  height: 56px;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const ButtonGradient = styled.View`
-  height: 100%;
+export const Content = styled.View`
   width: 100%;
+  height: auto;
+  margin: 10% 0;
+
+  flex: 1;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: ${({ theme }) => theme.COLORS.GRADIENT};
+  gap: 16px;
 `;
 
-export const ButtonText = styled.Text`
-  color: white;
-  font-size: 18px;
+export const LoginInputs = styled.View`
+  width: 100%;
+  height: auto;
+  max-height: 124px;
+
+  flex: 1;
+  gap: 16px;
+`;
+
+export const Image = styled.Image`
+  width: 100px;
+  height: 100px;
 `;

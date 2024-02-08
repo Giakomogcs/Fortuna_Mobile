@@ -2,8 +2,11 @@ const theme = {
   COLORS: {
     BACKGROUND_DEFAULT: "#E3E3E3",
     BACKGROUND_FOOTER: "#4E009C",
+    BACKGROUND_BUTTON: "#4E009C",
+    COLOR_DEFAULT: "#4E009C",
     GRADIENT: "linear-gradient(to bottom, #3A0273, #592D60)",
     INPUT_BORDER: "#4E009C",
+    BUTTON_BORDER: "#4E009C",
     INPUT_TITLE: "#4E009C",
     INPUT_TEXT: "#5A5A5A",
     WHITE: "#F4EDE8",
