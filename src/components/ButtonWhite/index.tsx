@@ -2,10 +2,12 @@ import React from "react";
 import { Container, TitleButton, StyledIcon } from "./styles";
 import { StyleSheet, Text, Image, View } from "react-native";
 
-interface ButtonProps {
+import { TouchableOpacityProps } from "react-native";
+
+interface ButtonProps extends TouchableOpacityProps {
   title?: string;
-  icon?: React.ComponentType<IconProps>; // Altere para o tipo adequado do ícone
-  onPress?: () => void;
+  icon?: React.ComponentType<IconProps>;
+  style?: object; // Defina a propriedade de estilo como opcional
 }
 
 // Defina o tipo para o ícone
@@ -14,9 +16,14 @@ interface IconProps {
   color?: string;
 }
 
-export function ButtonWhite({ title, icon: Icon, onPress }: ButtonProps) {
+export function ButtonWhite({
+  title,
+  icon: Icon,
+  onPress,
+  style,
+}: ButtonProps) {
   return (
-    <Container onPress={onPress}>
+    <Container onPress={onPress} style={style}>
       {Icon && (
         <StyledIcon>
           <Icon />
