@@ -3,13 +3,14 @@ import { LinearGradient } from "expo-linear-gradient";
 
 export const Container = styled.TouchableOpacity`
   width: 100%;
-  max-width: 400px;
   height: auto;
 
-  flex-direction: column;
+  display: flex;
+  flex-direction: row;
   gap: 3px;
   align-items: center;
   justify-content: center;
+  margin-top: 65px;
 `;
 
 export const Icon = styled.Image`
@@ -22,5 +23,4 @@ export const HeaderText = styled.Text`
   width: 100%;
   font-size: 24px;
   font-weight: 600;
-  margin-top: 65px;
 `;

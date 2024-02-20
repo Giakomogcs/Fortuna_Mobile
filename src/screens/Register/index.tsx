@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, View } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
 import { Container, Content, LoginInputs, Image } from "./styles";
@@ -17,7 +17,8 @@ import { Ionicons } from "@expo/vector-icons";
 export function Register() {
   return (
     <Container>
-      <HeaderSessions title="Cadastro" />
+      <HeaderSessions title="Cadastro" icon />
+
       <Content>
         <ProfilePicture
           onPress={() => console.log("Adicionar imagem pressionado")}
