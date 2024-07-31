@@ -8,6 +8,8 @@ import GoalCreateScreen from "./src/screens/GoalCreateScreen";
 import GoalDefineScreen from "./src/screens/GoalDefineScreen";
 import QuestionsGoalScreen from "./src/screens/QuestionsGoalScreen";
 import HomeScreen from "./src/screens/HomeScreen";
+import ListMeta from "./src/screens/ListMeta";
+
 import FinancialGoalsScreen from "./src/screens/FinancialGoalsScreen";
 import { TokenProvider, TokenContext } from "./src/hook/TokenContext";
 
@@ -33,6 +35,7 @@ const MainNavigator = () => {
           <Stack.Screen name="Questôes" component={QuestionsGoalScreen} />
           <Stack.Screen name="Criando Meta" component={GoalCreateScreen} />
           <Stack.Screen name="Definição da meta" component={GoalDefineScreen} />
+          <Stack.Screen name="Metas" component={ListMeta} />
           <Stack.Screen
             name="FinancialGoals"
             component={FinancialGoalsScreen}

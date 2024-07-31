@@ -25,6 +25,14 @@ const HomeScreen = ({ navigation }) => {
           <MaterialIcons name="attach-money" size={50} color="#9a67ea" />
         </TouchableOpacity>
 
+        <TouchableOpacity
+          onPress={() => navigation.navigate("Metas")}
+          style={styles.iconBox}
+        >
+          <MaterialIcons name="list" size={50} color="#9a67ea" />
+        </TouchableOpacity>
+
+
         <TouchableOpacity style={styles.iconBox}>
           <MaterialIcons name="insert-chart" size={50} color="#9a67ea" />
         </TouchableOpacity>
