@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Fortuna_Mobile",
-    "slug": "Fortuna_Mobile",
+    "name": "fortuna",
+    "slug": "snack-4102721b-3788-41a5-8a39-48f4bcd9a916",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -11,9 +11,6 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
     "ios": {
       "supportsTablet": true
     },
