@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState, useContext } from "react";
 import {
   View,
   Text,
@@ -6,10 +6,47 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
+import { TokenContext } from "../hook/TokenContext";
 
 const GoalDefineScreen = ({ route, navigation }) => {
-  const goalData = route.params;
+  const initialGoalData = route.params;
+  const [goalData, setGoalData] = useState(initialGoalData);
+  const [loading, setLoading] = useState(true);
+  const { token } = useContext(TokenContext);
+
+  useEffect(() => {
+    const fetchGoalData = async () => {
+      try {
+        const response = await fetch(
+          "https://fortuna-api.onrender.com/api/gemini/define",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(initialGoalData),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch goal data");
+        }
+
+        const data = await response.json();
+        setGoalData(data);
+      } catch (error) {
+        Alert.alert("Erro", "Falha ao definir a meta.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGoalData();
+  }, [initialGoalData]);
 
   const handleCreateGoal = () => {
     // Lógica para criar a meta
@@ -19,6 +56,15 @@ const GoalDefineScreen = ({ route, navigation }) => {
   const handleRewriteGoal = () => {
     navigation.navigate("GoalCreate", goalData);
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#9a67ea" />
+        <Text style={styles.loadingText}>Carregando...</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -58,12 +104,8 @@ const GoalDefineScreen = ({ route, navigation }) => {
         <Text style={styles.value}>{goalData.monthly_aport.toFixed(2)}</Text>
       </View>
       <View style={styles.detailContainer}>
-        <Text style={styles.label}>Respostas:</Text>
-        {goalData.answers.map((answer, index) => (
-          <Text key={index} style={styles.value}>{`Pergunta ${index + 1}: ${
-            answer ? "Sim" : "Não"
-          }`}</Text>
-        ))}
+        <Text style={styles.label}>Status:</Text>
+        <Text style={styles.value}>{goalData.status}</Text>
       </View>
       <View style={styles.summaryContainer}>
         <Text style={styles.label}>Resumo:</Text>
@@ -139,6 +181,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#9a67ea",
   },
 });
 

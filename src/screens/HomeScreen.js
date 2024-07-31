@@ -1,8 +1,16 @@
-import React from "react";
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
+import React, { useContext } from "react";
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
+import { TokenContext } from "../hook/TokenContext";
 
 const HomeScreen = ({ navigation }) => {
+  const { logout } = useContext(TokenContext);
+
+  const handleLogout = () => {
+    Alert.alert("Logout", "Você saiu da sua conta.");
+    logout(); // Remover o token
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -28,10 +36,7 @@ const HomeScreen = ({ navigation }) => {
           <MaterialIcons name="person" size={50} color="#9a67ea" />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Login")}
-          style={styles.iconBox}
-        >
+        <TouchableOpacity onPress={handleLogout} style={styles.iconBox}>
           <MaterialIcons name="logout" size={50} color="#9a67ea" />
         </TouchableOpacity>
       </View>

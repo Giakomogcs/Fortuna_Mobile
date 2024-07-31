@@ -1,5 +1,5 @@
 import "react-native-gesture-handler";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import LoginScreen from "./src/screens/LoginScreen";
@@ -15,18 +15,13 @@ const Stack = createStackNavigator();
 
 const MainNavigator = () => {
   const { token } = useContext(TokenContext);
-  const [initialRoute, setInitialRoute] = useState("Login");
 
   useEffect(() => {
-    if (token) {
-      setInitialRoute("Home");
-    } else {
-      setInitialRoute("Login");
-    }
+    // If the token changes, we need to reset the navigation state
   }, [token]);
 
   return (
-    <Stack.Navigator initialRouteName={initialRoute}>
+    <Stack.Navigator>
       {!token ? (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />

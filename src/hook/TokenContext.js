@@ -39,8 +39,12 @@ export const TokenProvider = ({ children }) => {
     }
   };
 
+  const logout = () => {
+    removeToken();
+  };
+
   return (
-    <TokenContext.Provider value={{ token, setToken: saveToken, removeToken }}>
+    <TokenContext.Provider value={{ token, setToken: saveToken, logout }}>
       {children}
     </TokenContext.Provider>
   );

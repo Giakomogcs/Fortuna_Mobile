@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,7 +15,7 @@ const LoginScreen = ({ navigation }) => {
   const [password, setPassword] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { setToken } = useContext(TokenContext); // Usar o contexto do token
+  const { token, setToken } = useContext(TokenContext); // Usar o contexto do token
 
   const handleLogin = async () => {
     setLoading(true);
@@ -46,8 +46,6 @@ const LoginScreen = ({ navigation }) => {
       setToken(token); // Armazenar o token no contexto
       setResponseMessage(`Login successful. Token: ${token}`);
       Alert.alert("Sucesso", "Login realizado com sucesso.");
-
-      navigation.navigate("Home");
     } catch (error) {
       setResponseMessage("An error occurred.");
       Alert.alert("Erro", "Ocorreu um erro.");
@@ -55,6 +53,12 @@ const LoginScreen = ({ navigation }) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (token) {
+      navigation.navigate("Home");
+    }
+  }, [token]);
 
   return (
     <View style={styles.container}>
