@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { TokenContext } from "../components/TokenContext"; // Importar o contexto do token
+import { TokenContext } from "../hook/TokenContext"; // Importar o contexto do token
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");

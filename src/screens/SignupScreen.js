@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
 import {
   View,
   Text,
@@ -7,46 +7,49 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { TokenContext } from '../components/TokenContext'; // Importar o contexto do token
-import { parse, format } from 'date-fns';
+} from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { TokenContext } from "../hook/TokenContext"; // Importar o contexto do token
+import { parse, format } from "date-fns";
 
 const SignupScreen = ({ navigation }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [confirmEmail, setConfirmEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [birthday, setBirthday] = useState('');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [birthday, setBirthday] = useState("");
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [responseMessage, setResponseMessage] = useState('');
+  const [responseMessage, setResponseMessage] = useState("");
   const { setToken } = useContext(TokenContext); // Usar o contexto do token
 
   const handleRegister = async () => {
     if (email !== confirmEmail) {
-      setResponseMessage('Emails não coincidem.');
-      Alert.alert('Erro', 'Os emails não coincidem.');
+      setResponseMessage("Emails não coincidem.");
+      Alert.alert("Erro", "Os emails não coincidem.");
       return;
     }
     if (password !== confirmPassword) {
-      setResponseMessage('Senhas não coincidem.');
-      Alert.alert('Erro', 'As senhas não coincidem.');
+      setResponseMessage("Senhas não coincidem.");
+      Alert.alert("Erro", "As senhas não coincidem.");
       return;
     }
 
-    const parseBirthday = parse(birthday, 'dd/MM/yyyy', new Date());
-    const formattedbirthday = format(parseBirthday, 'yyyy-MM-dd HH:mm:ss.SSSSSS');
+    const parseBirthday = parse(birthday, "dd/MM/yyyy", new Date());
+    const formattedbirthday = format(
+      parseBirthday,
+      "yyyy-MM-dd HH:mm:ss.SSSSSS"
+    );
 
     setLoading(true);
     try {
       const registerResponse = await fetch(
-        'https://fortuna-api.onrender.com/api/users',
+        "https://fortuna-api.onrender.com/api/users",
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             name,
@@ -60,18 +63,18 @@ const SignupScreen = ({ navigation }) => {
       const registerData = await registerResponse.json();
 
       if (!registerResponse.ok) {
-        setResponseMessage(registerData.message || 'Failed to register.');
+        setResponseMessage(registerData.message || "Failed to register.");
         setLoading(false);
         return;
       }
 
       // Login após cadastro bem-sucedido
       const loginResponse = await fetch(
-        'https://fortuna-api.onrender.com/api/sessions',
+        "https://fortuna-api.onrender.com/api/sessions",
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email,
@@ -81,8 +84,8 @@ const SignupScreen = ({ navigation }) => {
       );
 
       if (!loginResponse.ok) {
-        setResponseMessage('Falha ao autenticar após cadastro.');
-        Alert.alert('Erro', 'Falha ao autenticar após cadastro.');
+        setResponseMessage("Falha ao autenticar após cadastro.");
+        Alert.alert("Erro", "Falha ao autenticar após cadastro.");
         setLoading(false);
         return;
       }
@@ -90,28 +93,31 @@ const SignupScreen = ({ navigation }) => {
       const loginData = await loginResponse.json();
       const token = loginData.token;
       setToken(token); // Armazenar o token no contexto
-      setResponseMessage('Cadastro e login realizados com sucesso.');
-      Alert.alert('Sucesso', 'Cadastro e login realizados com sucesso.');
+      setResponseMessage("Cadastro e login realizados com sucesso.");
+      Alert.alert("Sucesso", "Cadastro e login realizados com sucesso.");
 
-      navigation.navigate('FinancialGoals'); // Redirecionar para FinancialGoalsScreen
+      navigation.navigate("FinancialGoals"); // Redirecionar para FinancialGoalsScreen
     } catch (error) {
-      setResponseMessage('Ocorreu um erro.');
-      Alert.alert('Erro', 'Ocorreu um erro.');
+      setResponseMessage("Ocorreu um erro.");
+      Alert.alert("Erro", "Ocorreu um erro.");
     } finally {
       setLoading(false);
     }
   };
 
   const formatbirthday = (text) => {
-    const cleaned = text.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
-    let formatted = '';
+    const cleaned = text.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
+    let formatted = "";
 
     if (cleaned.length <= 2) {
       formatted = cleaned;
     } else if (cleaned.length <= 4) {
       formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
     } else {
-      formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
+      formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(
+        2,
+        4
+      )}/${cleaned.slice(4, 8)}`;
     }
 
     setBirthday(formatted);
@@ -121,7 +127,7 @@ const SignupScreen = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.headerText}>
-          Crie sua conta,{' '}
+          Crie sua conta,{" "}
           <Text style={styles.headerTextBold}>
             e aproveite nosso app. Estamos te esperando
           </Text>
@@ -153,9 +159,10 @@ const SignupScreen = ({ navigation }) => {
             onChangeText={setPassword}
           />
           <TouchableOpacity
-            onPress={() => setSecureTextEntry(!secureTextEntry)}>
+            onPress={() => setSecureTextEntry(!secureTextEntry)}
+          >
             <MaterialIcons
-              name={secureTextEntry ? 'visibility-off' : 'visibility'}
+              name={secureTextEntry ? "visibility-off" : "visibility"}
               size={24}
               color="black"
             />
@@ -170,9 +177,10 @@ const SignupScreen = ({ navigation }) => {
             onChangeText={setConfirmPassword}
           />
           <TouchableOpacity
-            onPress={() => setSecureTextEntry(!secureTextEntry)}>
+            onPress={() => setSecureTextEntry(!secureTextEntry)}
+          >
             <MaterialIcons
-              name={secureTextEntry ? 'visibility-off' : 'visibility'}
+              name={secureTextEntry ? "visibility-off" : "visibility"}
               size={24}
               color="black"
             />
@@ -189,15 +197,16 @@ const SignupScreen = ({ navigation }) => {
         <TouchableOpacity
           style={styles.button}
           onPress={handleRegister}
-          disabled={loading}>
+          disabled={loading}
+        >
           <Text style={styles.buttonText}>Criar sua conta</Text>
         </TouchableOpacity>
         {responseMessage ? (
           <Text style={styles.responseMessage}>{responseMessage}</Text>
         ) : null}
-        <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
           <Text style={styles.loginText}>
-            Você já tem uma conta?{' '}
+            Você já tem uma conta?{" "}
             <Text style={styles.loginTextBold}>Logar!</Text>
           </Text>
         </TouchableOpacity>
@@ -209,60 +218,60 @@ const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   formContainer: {
-    marginTop: '40%',
+    marginTop: "40%",
     padding: 20,
   },
   headerText: {
     fontSize: 18,
-    textAlign: 'center',
+    textAlign: "center",
     marginBottom: 20,
   },
   headerTextBold: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
     flex: 1,
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
   },
   button: {
-    backgroundColor: '#8A2BE2',
+    backgroundColor: "#8A2BE2",
     paddingVertical: 15,
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
   responseMessage: {
-    textAlign: 'center',
-    color: 'red',
+    textAlign: "center",
+    color: "red",
     marginBottom: 20,
   },
   loginText: {
-    textAlign: 'center',
-    color: '#000',
+    textAlign: "center",
+    color: "#000",
   },
   loginTextBold: {
-    color: '#8A2BE2',
-    fontWeight: 'bold',
+    color: "#8A2BE2",
+    fontWeight: "bold",
   },
 });
 
