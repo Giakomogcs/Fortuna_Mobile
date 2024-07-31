@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,13 +7,13 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
-} from 'react-native';
-import { TokenContext } from '../components/TokenContext'; // Importar o contexto do token
+} from "react-native";
+import { TokenContext } from "../components/TokenContext"; // Importar o contexto do token
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('neguinho@gmail.com');
-  const [password, setPassword] = useState('123');
-  const [responseMessage, setResponseMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [responseMessage, setResponseMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { setToken } = useContext(TokenContext); // Usar o contexto do token
 
@@ -21,11 +21,11 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
     try {
       const authResponse = await fetch(
-        'https://fortuna-api.onrender.com/api/sessions',
+        "https://fortuna-api.onrender.com/api/sessions",
         {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email,
@@ -35,8 +35,8 @@ const LoginScreen = ({ navigation }) => {
       );
 
       if (!authResponse.ok) {
-        setResponseMessage('Failed to authenticate.');
-        Alert.alert('Erro', 'Falha ao autenticar.');
+        setResponseMessage("Failed to authenticate.");
+        Alert.alert("Erro", "Falha ao autenticar.");
         setLoading(false);
         return;
       }
@@ -45,12 +45,12 @@ const LoginScreen = ({ navigation }) => {
       const token = authData.token;
       setToken(token); // Armazenar o token no contexto
       setResponseMessage(`Login successful. Token: ${token}`);
-      Alert.alert('Sucesso', 'Login realizado com sucesso.');
+      Alert.alert("Sucesso", "Login realizado com sucesso.");
 
-      navigation.navigate('Home');
+      navigation.navigate("Home");
     } catch (error) {
-      setResponseMessage('An error occurred.');
-      Alert.alert('Erro', 'Ocorreu um erro.');
+      setResponseMessage("An error occurred.");
+      Alert.alert("Erro", "Ocorreu um erro.");
     } finally {
       setLoading(false);
     }
@@ -84,7 +84,7 @@ const LoginScreen = ({ navigation }) => {
       {responseMessage && (
         <Text style={styles.responseMessage}>{responseMessage}</Text>
       )}
-      <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+      <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
         <Text style={styles.createAccountText}>
           Você não tem uma conta? Crie agora!
         </Text>
@@ -96,51 +96,51 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
     padding: 20,
   },
   header: {
-    alignItems: 'center',
+    alignItems: "center",
     marginBottom: 40,
   },
   welcomeText: {
     fontSize: 18,
-    color: '#000',
+    color: "#000",
   },
   welcomeBackText: {
     fontSize: 18,
-    color: '#000',
-    fontWeight: 'bold',
+    color: "#000",
+    fontWeight: "bold",
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 10,
     paddingLeft: 10,
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#9a67ea',
+    backgroundColor: "#9a67ea",
     paddingVertical: 15,
     paddingHorizontal: 80,
     borderRadius: 10,
     marginBottom: 20,
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
   },
   createAccountText: {
-    color: '#9a67ea',
+    color: "#9a67ea",
   },
   responseMessage: {
-    color: '#000',
+    color: "#000",
     marginTop: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
 });
 
