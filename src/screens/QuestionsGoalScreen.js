@@ -1,25 +1,15 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
-  Alert,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-import { TokenContext } from "../hook/TokenContext"; // Importar o contexto do token
 import { Questions } from "../components/Questions";
-import { parse, format } from "date-fns";
 
-const QuestionsGoalScreen = () => {
-  const questions = [
-    "Você está ciente do valor total necessário para o casamento flash? Esse valor de R$43.000 inclui todos os custos como aluguel do local, buffet, decoração e outros gastos?",
-    "Você está disposto a aumentar o tempo para alcançar a meta? Caso você tenha mais tempo, será possível reduzir o valor do aporte mensal necessário, facilitando o planejamento financeiro.",
-    "Você consegue aumentar o valor do aporte mensal para R$8.457,61 para atingir a meta em 6 meses? Essa mudança te permitiria alcançar a meta dentro do prazo desejado, mas exige um planejamento mais rigoroso.",
-  ];
-
+const QuestionsGoalScreen = ({ route, navigation }) => {
+  const { goalData } = route.params;
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
 
@@ -27,21 +17,25 @@ const QuestionsGoalScreen = () => {
     const updatedAnswers = [...answers, answer];
     setAnswers(updatedAnswers);
 
-    if (currentQuestionIndex < questions.length - 1) {
+    if (currentQuestionIndex < goalData.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Aqui você pode enviar as respostas para o JSON de goals
-      Alert.alert("Respostas enviadas", JSON.stringify(updatedAnswers));
-      // Resetar perguntas e respostas
-      setCurrentQuestionIndex(0);
-      setAnswers([]);
+      goalData.answers = updatedAnswers;
+      navigation.navigate("Definição da meta", { ...goalData });
     }
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.summaryContainer}>
+        <Text style={styles.summaryTitle}>Resumo da Meta</Text>
+        <Text style={styles.summaryText}>{goalData.summary}</Text>
+      </View>
       <View style={styles.formContainer}>
-        <Questions question={questions[currentQuestionIndex]} />
+        <Text style={styles.questionHeader}>
+          Questão {currentQuestionIndex + 1} de {goalData.questions.length}
+        </Text>
+        <Questions question={goalData.questions[currentQuestionIndex]} />
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, styles.yesButton]}
@@ -65,16 +59,37 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: "#fff",
+    padding: 20,
+  },
+  summaryContainer: {
+    marginBottom: 20,
+    padding: 20,
+    backgroundColor: "#f9f9f9",
+    borderRadius: 10,
+  },
+  summaryTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  summaryText: {
+    fontSize: 16,
+    lineHeight: 24,
   },
   formContainer: {
-    marginTop: "40%",
-    padding: 20,
+    marginTop: 20,
     alignItems: "center",
+  },
+  questionHeader: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
+    marginTop: 20,
   },
   button: {
     padding: 15,

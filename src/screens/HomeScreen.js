@@ -34,13 +34,6 @@ const HomeScreen = ({ navigation }) => {
         >
           <MaterialIcons name="logout" size={50} color="#9a67ea" />
         </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Questôes")}
-          style={styles.iconBox}
-        >
-          <MaterialIcons name="quiz" size={50} color="#9a67ea" />
-        </TouchableOpacity>
       </View>
     </View>
   );
