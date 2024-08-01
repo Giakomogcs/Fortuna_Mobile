@@ -46,10 +46,22 @@ const MainNavigator = () => {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="Questôes" component={QuestionsGoalScreen} />
-          <Stack.Screen name="Criando Meta" component={GoalCreateScreen} />
+          <Stack.Screen
+            name="Criando Meta"
+            component={GoalCreateScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="Definição da meta" component={GoalDefineScreen} />
-          <Stack.Screen name="Metas" component={ListMeta} />
-          <Stack.Screen name="Plano de ação" component={GoalCreatePlanScreen} />
+          <Stack.Screen
+            name="Metas"
+            component={ListMeta}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Plano de ação"
+            component={GoalCreatePlanScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen
             name="FinancialGoals"
             component={FinancialGoalsScreen}

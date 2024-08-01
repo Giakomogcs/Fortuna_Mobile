@@ -6,45 +6,49 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { TokenContext } from "../hook/TokenContext";
+import Header from "../components/Header";
+import Icon from "react-native-vector-icons/Ionicons";
 
-const GoalCreatePlanScreen = ({ route }) => {
+const GoalCreatePlanScreen = ({ route, navigation }) => {
   const { goalId } = route.params;
-  const { token } = useContext(TokenContext);
+  const { token, user } = useContext(TokenContext);
   const [goalData, setGoalData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchGoalData = async () => {
-      try {
-        const response = await fetch(
-          `https://fortuna-api.onrender.com/api/gemini/plan/${goalId}`,
-          {
-            method: "GET", // Usando o método GET
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          const errorData = await response.text();
-          console.error("Error response data:", errorData);
-          throw new Error("Failed to fetch goal data");
+  const fetchGoalData = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://fortuna-api.onrender.com/api/gemini/plan/${goalId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        const data = await response.json();
-        setGoalData(data);
-      } catch (error) {
-        Alert.alert("Erro", "Falha ao buscar os dados da meta.");
-        console.error(error);
-      } finally {
-        setLoading(false);
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Error response data:", errorData);
+        throw new Error("Failed to fetch goal data");
       }
-    };
 
+      const data = await response.json();
+      setGoalData(data);
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao buscar os dados da meta.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchGoalData();
   }, [goalId, token]);
 
@@ -68,68 +72,57 @@ const GoalCreatePlanScreen = ({ route }) => {
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Plano de Ação</Text>
-      <Text style={styles.subtitle}>Objetivo</Text>
-      <Text style={styles.text}>{goalData.planning.objective}</Text>
-      <Text style={styles.subtitle}>ID da Meta: {goalId}</Text>
+    <View style={styles.container}>
+      <Header title="Plano de Ação" onRefresh={fetchGoalData} />
+      <ScrollView>
+        <Text style={styles.subtitle}>Objetivo</Text>
+        <Text style={styles.text}>{goalData.planning.objective}</Text>
 
-      <Text style={styles.subtitle}>Passos</Text>
-      {goalData.planning.steps.map((step, index) => (
-        <View key={index} style={styles.stepContainer}>
-          <Text style={styles.stepTitle}>{step.step}</Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Descrição:</Text> {step.description}
-          </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Prazo:</Text> {step.deadline}
-          </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Responsável:</Text> {step.responsible}
-          </Text>
-          <Text style={styles.text}>
-            <Text style={styles.bold}>Indicador de Sucesso:</Text>{" "}
-            {step.success_indicator}
-          </Text>
-          {step.context && (
+        <Text style={[styles.subtitle, { marginBottom: 10 }]}>Passos</Text>
+        {goalData.planning.steps.map((step, index) => (
+          <View key={index} style={styles.stepContainer}>
             <Text style={styles.text}>
-              <Text style={styles.bold}>Contexto:</Text> {step.context}
+              <Text style={styles.bold}>{step.description}</Text>
             </Text>
-          )}
-        </View>
-      ))}
+            <Text style={styles.text}>
+              <Text style={styles.bold}>Prazo:</Text> {step.deadline}
+            </Text>
+            <Text style={styles.text}>
+              <Text style={styles.bold}>Indicador de Sucesso:</Text>{" "}
+              {step.success_indicator}
+            </Text>
+          </View>
+        ))}
 
-      <Text style={styles.subtitle}>Recursos</Text>
-      {goalData.planning.resources.map((resource, index) => (
-        <View key={index} style={styles.resourceContainer}>
-          <Text style={styles.resourceTitle}>{resource.resource}</Text>
-          <Text style={styles.text}>{resource.description}</Text>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.goalsButton}
+            onPress={() => navigation.navigate("Metas")}
+          >
+            <Text style={styles.buttonText}>Ir para Minhas Metas</Text>
+          </TouchableOpacity>
         </View>
-      ))}
-    </ScrollView>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: "#f5f5f5",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
   },
   subtitle: {
     fontSize: 20,
     color: "#2c3e50",
     marginBottom: 10,
+    paddingHorizontal: 20,
+    fontWeight: "bold",
   },
   text: {
     fontSize: 16,
     marginBottom: 5,
+    paddingHorizontal: 20,
   },
   bold: {
     fontWeight: "bold",
@@ -139,22 +132,22 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     marginBottom: 10,
+    marginHorizontal: 20,
   },
-  stepTitle: {
-    fontSize: 18,
-    color: "#34495e",
-    marginBottom: 5,
+  buttonContainer: {
+    padding: 20,
+    alignItems: "center",
   },
-  resourceContainer: {
-    backgroundColor: "#ecf0f1",
+  goalsButton: {
+    backgroundColor: "#4CAF50",
     padding: 15,
-    borderRadius: 5,
-    marginBottom: 10,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "80%",
   },
-  resourceTitle: {
-    fontSize: 18,
-    color: "#34495e",
-    marginBottom: 5,
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
   },
   loadingContainer: {
     flex: 1,

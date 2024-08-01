@@ -52,26 +52,30 @@ const GoalCreateScreen = ({ navigation }) => {
       );
 
       if (responsePreview.ok) {
-        const resultPreview = await responsePreview.json();
-        setResponseMessage(JSON.stringify(resultPreview, null, 2));
+        try {
+          const resultPreview = await responsePreview.json();
+          setResponseMessage(JSON.stringify(resultPreview, null, 2));
 
-        const responseAnalyze = await fetch(
-          "https://fortuna-api.onrender.com/api/gemini/analyze",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify(resultPreview),
+          const responseAnalyze = await fetch(
+            "https://fortuna-api.onrender.com/api/gemini/analyze",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify(resultPreview),
+            }
+          );
+
+          if (responseAnalyze.ok) {
+            const resultAnalyze = await responseAnalyze.json();
+            navigation.navigate("Questôes", { goalData: resultAnalyze });
+          } else {
+            setResponseMessage("Failed to analyze goal data.");
           }
-        );
-
-        if (responseAnalyze.ok) {
-          const resultAnalyze = await responseAnalyze.json();
-          navigation.navigate("Questôes", { goalData: resultAnalyze });
-        } else {
-          setResponseMessage("Failed to analyze goal data.");
+        } catch (error) {
+          console.log(error);
         }
       } else {
         setResponseMessage("Failed to submit goal data.");

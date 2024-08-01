@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TokenContext } from "../hook/TokenContext";
+import Header from "../components/Header";
 
 const HomeScreen = ({ navigation }) => {
   const { logout } = useContext(TokenContext);
@@ -13,6 +14,7 @@ const HomeScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Header title="Fortuna" />
       <View style={styles.header}>
         <Text style={styles.welcomeText}>Nome de usuário,</Text>
         <Text style={styles.welcomeBackText}>Seja bem vindo</Text>
@@ -31,7 +33,6 @@ const HomeScreen = ({ navigation }) => {
         >
           <MaterialIcons name="list" size={50} color="#9a67ea" />
         </TouchableOpacity>
-
 
         <TouchableOpacity style={styles.iconBox}>
           <MaterialIcons name="insert-chart" size={50} color="#9a67ea" />
