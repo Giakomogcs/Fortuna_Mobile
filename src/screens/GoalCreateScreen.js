@@ -30,7 +30,7 @@ const GoalCreateScreen = ({ navigation }) => {
       patrimony: typeGoal ? 0 : patrimony,
       dividends: typeGoal ? dividends : 0,
       type_goal: typeGoal,
-      initial_patrimony: typeGoal ? 0 : initialPatrimony,
+      initial_patrimony: initialPatrimony,
       time_desired: timeDesired,
       monthly_aport: monthlyAport,
       rate: rate,
@@ -112,12 +112,6 @@ const GoalCreateScreen = ({ navigation }) => {
               />
 
               <Text style={styles.label}>Initial Patrimony:</Text>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                value={String(initialPatrimony)}
-                onChangeText={(text) => setInitialPatrimony(Number(text))}
-              />
             </>
           )}
 
@@ -132,15 +126,15 @@ const GoalCreateScreen = ({ navigation }) => {
               />
 
               <Text style={styles.label}>Initial Patrimony:</Text>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                value={String(initialPatrimony)}
-                onChangeText={(text) => setInitialPatrimony(0)}
-                editable={false} // Desabilita edição
-              />
             </>
           )}
+
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            value={String(initialPatrimony)}
+            onChangeText={(text) => setInitialPatrimony(Number(text))}
+          />
 
           <Text style={styles.label}>Time Desired (years):</Text>
           <TextInput

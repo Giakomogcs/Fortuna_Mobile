@@ -48,13 +48,41 @@ const GoalDefineScreen = ({ route, navigation }) => {
     fetchGoalData();
   }, [initialGoalData]);
 
-  const handleCreateGoal = () => {
-    // Lógica para criar a meta
-    Alert.alert("Meta Criada", "Sua meta foi criada com sucesso!");
+  const handleCreateGoal = async () => {
+    try {
+      const dataToSend = { ...goalData };
+      if (goalData.monthly_aport) {
+        delete dataToSend.monthly_aport;
+      }
+
+      const response = await fetch(
+        "https://fortuna-api.onrender.com/api/goals",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(dataToSend),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error data:", errorData);
+        throw new Error(errorData.message || "Failed to create goal");
+      }
+
+      Alert.alert("Meta Criada", "Sua meta foi criada com sucesso!");
+      navigation.navigate("Metas");
+    } catch (error) {
+      Alert.alert("Erro", error.message || "Falha ao criar a meta.");
+      console.error("Fetch error:", error);
+    }
   };
 
   const handleRewriteGoal = () => {
-    navigation.navigate("GoalCreate", goalData);
+    navigation.navigate("Criando Meta", goalData);
   };
 
   if (loading) {
