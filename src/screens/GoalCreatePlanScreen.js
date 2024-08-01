@@ -1,77 +1,81 @@
-// src/screens/GoalCreatePlanScreen.js
+import React, { useEffect, useState, useContext } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
+import { TokenContext } from "../hook/TokenContext";
 
-import React from "react";
-import { View, Text, StyleSheet, ScrollView } from "react-native";
+const GoalCreatePlanScreen = ({ route }) => {
+  const { goalId } = route.params;
+  const { token } = useContext(TokenContext);
+  const [goalData, setGoalData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-const planData = {
-  planning: {
-    objective:
-      "Aumentar patrimônio para R$ 300.000,00 para gerar uma renda passiva de R$ 3.000,00 por mês.",
-    steps: [
-      {
-        step: "Sub-objetivo",
-        description: "Investir mensalmente R$ 1.303,44",
-        deadline: "Mensal",
-        responsible: "Giovani C.S",
-        success_indicator: "Valor investido mensalmente",
-        context:
-          "O aporte mensal de R$ 1.303,44 é viável, representando cerca de 24% do salário atual de R$ 5.500,45. Se precisar, reavalie suas despesas e/ou busque aumentar sua renda para manter este ritmo de investimento.",
-      },
-      {
-        step: "Sub-objetivo",
-        description: "Acompanhar rendimentos mensais",
-        deadline: "Mensal",
-        responsible: "Giovani C.S",
-        success_indicator: "Relatório de rendimentos",
-      },
-      {
-        step: "Sub-objetivo",
-        description: "Reavaliar investimentos a cada trimestre",
-        deadline: "Trimestral",
-        responsible: "Giovani C.S",
-        success_indicator: "Relatório de avaliação de investimentos",
-        context:
-          "Como você já possui um bom conhecimento em renda fixa (0.6) e renda variável (0.5), a cada trimestre, analise o desempenho dos seus investimentos e faça os ajustes necessários para manter seu objetivo. Comece com uma carteira diversificada com foco em renda fixa e, gradualmente, com base em seu conhecimento, inclua investimentos de renda variável para aumentar o potencial de retorno. Não se esqueça de monitorar o risco de cada investimento.",
-      },
-      {
-        step: "Sub-objetivo",
-        description: "Estudar mais sobre investimentos em renda variável",
-        deadline: "Semestral",
-        responsible: "Giovani C.S",
-        success_indicator:
-          "Conclusão de cursos ou livros sobre investimentos em renda variável",
-        context:
-          "Aumentar o conhecimento sobre renda variável, como ações e fundos de investimento, pode te ajudar a construir uma carteira diversificada e aumentar o retorno a longo prazo. Utilize plataformas de educação financeira online, livros, cursos e outros materiais de aprendizagem para aumentar seu conhecimento e confiança.",
-      },
-    ],
-    resources: [
-      {
-        resource: "Plataforma de investimentos",
-        description: "Ferramenta utilizada para realizar os investimentos.",
-      },
-      {
-        resource: "Relatórios financeiros",
-        description:
-          "Documentos que detalham os rendimentos e performance dos investimentos.",
-      },
-      {
-        resource: "Consultoria financeira (se necessário)",
-        description:
-          "Serviço de orientação financeira para auxiliar nas decisões de investimento.",
-      },
-    ],
-  },
-};
+  useEffect(() => {
+    const fetchGoalData = async () => {
+      try {
+        const response = await fetch(
+          `https://fortuna-api.onrender.com/api/gemini/plan/${goalId}`,
+          {
+            method: "GET", // Usando o método GET
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-const GoalCreatePlanScreen = () => {
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error("Error response data:", errorData);
+          throw new Error("Failed to fetch goal data");
+        }
+
+        const data = await response.json();
+        setGoalData(data);
+      } catch (error) {
+        Alert.alert("Erro", "Falha ao buscar os dados da meta.");
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGoalData();
+  }, [goalId, token]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#9a67ea" />
+        <Text style={styles.loadingText}>Carregando...</Text>
+      </View>
+    );
+  }
+
+  if (!goalData) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>
+          Erro ao carregar os dados do plano de ação.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Plano de Ação</Text>
       <Text style={styles.subtitle}>Objetivo</Text>
-      <Text style={styles.text}>{planData.planning.objective}</Text>
+      <Text style={styles.text}>{goalData.planning.objective}</Text>
+      <Text style={styles.subtitle}>ID da Meta: {goalId}</Text>
 
       <Text style={styles.subtitle}>Passos</Text>
-      {planData.planning.steps.map((step, index) => (
+      {goalData.planning.steps.map((step, index) => (
         <View key={index} style={styles.stepContainer}>
           <Text style={styles.stepTitle}>{step.step}</Text>
           <Text style={styles.text}>
@@ -96,7 +100,7 @@ const GoalCreatePlanScreen = () => {
       ))}
 
       <Text style={styles.subtitle}>Recursos</Text>
-      {planData.planning.resources.map((resource, index) => (
+      {goalData.planning.resources.map((resource, index) => (
         <View key={index} style={styles.resourceContainer}>
           <Text style={styles.resourceTitle}>{resource.resource}</Text>
           <Text style={styles.text}>{resource.description}</Text>
@@ -151,6 +155,25 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#34495e",
     marginBottom: 5,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: "#9a67ea",
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  errorText: {
+    fontSize: 16,
+    color: "#e74c3c",
   },
 });
 

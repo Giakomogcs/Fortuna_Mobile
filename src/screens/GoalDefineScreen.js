@@ -73,8 +73,11 @@ const GoalDefineScreen = ({ route, navigation }) => {
         throw new Error(errorData.message || "Failed to create goal");
       }
 
+      const createdGoal = await response.json();
+
       Alert.alert("Meta Criada", "Sua meta foi criada com sucesso!");
-      navigation.navigate("Metas");
+      const goalId = createdGoal.goal_id.id; // Extraindo o ID da meta criada
+      navigation.navigate("Plano de ação", { goalId });
     } catch (error) {
       Alert.alert("Erro", error.message || "Falha ao criar a meta.");
       console.error("Fetch error:", error);
