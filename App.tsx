@@ -5,16 +5,16 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { ThemeProvider } from "styled-components";
 import theme from "./src/theme";
 
-import LoginScreen from "./src/screens/LoginScreen";
-import SignupScreen from "./src/screens/SignupScreen";
-import GoalCreateScreen from "./src/screens/GoalCreateScreen";
-import GoalDefineScreen from "./src/screens/GoalDefineScreen";
-import QuestionsGoalScreen from "./src/screens/QuestionsGoalScreen";
-import HomeScreen from "./src/screens/HomeScreen";
-import ListMeta from "./src/screens/ListMeta";
-import GoalCreatePlanScreen from "./src/screens/GoalCreatePlanScreen";
-import FinancialGoalsScreen from "./src/screens/FinancialGoalsScreen";
-import { TokenProvider, TokenContext } from "./src/hook/TokenContext"; // Corrigido o caminho
+import LoginScreen from "@screens/LoginScreen";
+import SignupScreen from "@screens/SignupScreen";
+import GoalCreateScreen from "@screens/GoalCreateScreen";
+import GoalDefineScreen from "@screens/GoalDefineScreen";
+import QuestionsGoalScreen from "@screens/QuestionsGoalScreen";
+import HomeScreen from "@screens/HomeScreen";
+import ListMeta from "@screens/ListMeta";
+import GoalCreatePlanScreen from "@screens/GoalCreatePlanScreen";
+import FinancialGoalsScreen from "@screens/FinancialGoalsScreen";
+import { TokenProvider, TokenContext } from "@hook/TokenContext";
 
 const Stack = createStackNavigator();
 
