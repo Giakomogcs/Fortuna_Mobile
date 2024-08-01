@@ -15,7 +15,7 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Header title="Fortuna" />
-      <View style={styles.header}>
+      <View style={styles.welcomeContainer}>
         <Text style={styles.welcomeText}>Nome de usuário,</Text>
         <Text style={styles.welcomeBackText}>Seja bem vindo</Text>
       </View>
@@ -56,17 +56,15 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: "#fff",
-    padding: 20,
   },
-  header: {
+  welcomeContainer: {
     width: "100%",
     padding: 20,
-    paddingBottom: 50,
     backgroundColor: "#9a67ea",
     borderBottomLeftRadius: 25,
     borderBottomRightRadius: 25,
+    alignItems: "center",
   },
   welcomeText: {
     fontSize: 18,

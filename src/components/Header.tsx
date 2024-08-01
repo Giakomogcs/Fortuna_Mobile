@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HStack, VStack, Text, Icon, Image } from "native-base";
-import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TokenContext } from "../hook/TokenContext";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -39,14 +39,15 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
           ) : (
             <VStack style={styles.initialsContainer}>
               <Text style={styles.initialsText}>
-                {getInitials(user?.name || "")}
+                {getInitials(user?.name || "N/A")}
               </Text>
             </VStack>
           )}
         </TouchableOpacity>
-        <VStack flex={1}>
-          <Text style={styles.greetingText}>Olá</Text>
-          <Text style={styles.userNameText}>{user?.name}</Text>
+        <VStack flex={1} marginLeft={4}>
+          <Text style={styles.greetingText}>
+            Olá, {user?.name || "Nome não disponível"}
+          </Text>
         </VStack>
         {onRefresh && (
           <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
@@ -60,9 +61,7 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1,
     backgroundColor: "#4CAF50",
-    width: "100%",
   },
   header: {
     flexDirection: "row",
@@ -71,7 +70,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 16,
     backgroundColor: "#4CAF50",
-    width: "100%",
   },
   userContainer: {
     marginRight: 8,
