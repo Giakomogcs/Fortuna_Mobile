@@ -1,0 +1,111 @@
+import React, { useContext } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { HStack, VStack, Text, Icon, Image } from "native-base";
+import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { TokenContext } from "../hook/TokenContext";
+import { MaterialIcons } from "@expo/vector-icons";
+
+type HeaderProps = {
+  title: string;
+  onRefresh?: () => void;
+};
+
+const getInitials = (name: string): string => {
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .join("");
+  return initials.substring(0, 2).toUpperCase();
+};
+
+const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
+  const navigation = useNavigation<NavigationProp<any>>();
+  const { user } = useContext(TokenContext);
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <HStack style={styles.header}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("FinancialGoals")}
+          style={styles.userContainer}
+        >
+          {user?.photoUrl ? (
+            <Image
+              source={{ uri: user.photoUrl }}
+              alt="User Photo"
+              style={styles.userPhoto}
+            />
+          ) : (
+            <VStack style={styles.initialsContainer}>
+              <Text style={styles.initialsText}>
+                {getInitials(user?.name || "")}
+              </Text>
+            </VStack>
+          )}
+        </TouchableOpacity>
+        <VStack flex={1}>
+          <Text style={styles.greetingText}>Olá</Text>
+          <Text style={styles.userNameText}>{user?.name}</Text>
+        </VStack>
+        {onRefresh && (
+          <TouchableOpacity onPress={onRefresh} style={styles.refreshButton}>
+            <Icon as={MaterialIcons} name="refresh" color="white" size={7} />
+          </TouchableOpacity>
+        )}
+      </HStack>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#4CAF50",
+    width: "100%",
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 8,
+    paddingVertical: 16,
+    backgroundColor: "#4CAF50",
+    width: "100%",
+  },
+  userContainer: {
+    marginRight: 8,
+  },
+  userPhoto: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+  },
+  initialsContainer: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  initialsText: {
+    color: "#4CAF50",
+    fontWeight: "bold",
+    fontSize: 18,
+  },
+  greetingText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  userNameText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  refreshButton: {
+    padding: 10,
+  },
+});
+
+export default Header;

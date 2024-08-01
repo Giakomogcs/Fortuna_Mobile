@@ -8,14 +8,14 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import { TokenContext } from "../hook/TokenContext"; // Importar o contexto do token
+import { TokenContext } from "@hook/TokenContext"; // Importar o contexto do token
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { token, setToken } = useContext(TokenContext); // Usar o contexto do token
+  const { token, setTokenAndUser } = useContext(TokenContext); // Usar o contexto do token
 
   const handleLogin = async () => {
     setLoading(true);
@@ -34,21 +34,27 @@ const LoginScreen = ({ navigation }) => {
         }
       );
 
+      const responseText = await authResponse.text();
+      console.log("Response Status:", authResponse.status);
+      console.log("Response Text:", responseText);
+
       if (!authResponse.ok) {
-        setResponseMessage("Failed to authenticate.");
-        Alert.alert("Erro", "Falha ao autenticar.");
+        setResponseMessage(`Erro ${authResponse.status}: ${responseText}`);
+        Alert.alert("Erro", `Falha ao autenticar. ${responseText}`);
         setLoading(false);
         return;
       }
 
-      const authData = await authResponse.json();
+      const authData = JSON.parse(responseText);
       const token = authData.token;
-      setToken(token); // Armazenar o token no contexto
-      setResponseMessage(`Login successful. Token: ${token}`);
+      const userData = authData.user;
+      setTokenAndUser(token, userData); // Armazenar o token e os dados do usuário no contexto
+      setResponseMessage("Login realizado com sucesso.");
       Alert.alert("Sucesso", "Login realizado com sucesso.");
     } catch (error) {
-      setResponseMessage("An error occurred.");
-      Alert.alert("Erro", "Ocorreu um erro.");
+      console.error("Login Error:", error);
+      setResponseMessage(`Erro: ${error.message}`);
+      Alert.alert("Erro", `Ocorreu um erro: ${error.message}`);
     } finally {
       setLoading(false);
     }

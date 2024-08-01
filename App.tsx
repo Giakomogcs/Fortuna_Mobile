@@ -2,6 +2,8 @@ import "react-native-gesture-handler";
 import React, { useContext, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { NativeBaseProvider } from "native-base";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "styled-components";
 import theme from "./src/theme";
 
@@ -78,11 +80,15 @@ const MainNavigator = () => {
 function App() {
   return (
     <TokenProvider>
-      <ThemeProvider theme={theme}>
-        <NavigationContainer>
-          <MainNavigator />
-        </NavigationContainer>
-      </ThemeProvider>
+      <NativeBaseProvider>
+        <ThemeProvider theme={theme}>
+          <SafeAreaProvider>
+            <NavigationContainer>
+              <MainNavigator />
+            </NavigationContainer>
+          </SafeAreaProvider>
+        </ThemeProvider>
+      </NativeBaseProvider>
     </TokenProvider>
   );
 }
