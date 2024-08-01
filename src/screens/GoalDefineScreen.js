@@ -108,16 +108,16 @@ const GoalDefineScreen = ({ route, navigation }) => {
         </Text>
       </View>
       <View style={styles.detailContainer}>
-        <Text style={styles.label}>Patrimônio Inicial:</Text>
-        <Text style={styles.value}>{goalData.initial_patrimony}</Text>
+        <Text style={styles.label}>Patrimônio Desejado:</Text>
+        <Text style={styles.value}>{goalData.patrimony}</Text>
+      </View>
+      <View style={styles.detailContainer}>
+        <Text style={styles.label}>Dividendos:</Text>
+        <Text style={styles.value}>{goalData.dividends}</Text>
       </View>
       <View style={styles.detailContainer}>
         <Text style={styles.label}>Meu Patrimônio:</Text>
         <Text style={styles.value}>{goalData.my_patrimony}</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Patrimônio Desejado:</Text>
-        <Text style={styles.value}>{goalData.patrimony}</Text>
       </View>
       <View style={styles.detailContainer}>
         <Text style={styles.label}>Taxa:</Text>
@@ -131,10 +131,7 @@ const GoalDefineScreen = ({ route, navigation }) => {
         <Text style={styles.label}>Aporte Mensal:</Text>
         <Text style={styles.value}>{goalData.monthly_aport.toFixed(2)}</Text>
       </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Status:</Text>
-        <Text style={styles.value}>{goalData.status}</Text>
-      </View>
+
       <View style={styles.summaryContainer}>
         <Text style={styles.label}>Resumo:</Text>
         <Text style={styles.summary}>{goalData.summary}</Text>
