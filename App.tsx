@@ -2,6 +2,9 @@ import "react-native-gesture-handler";
 import React, { useContext, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import { ThemeProvider } from "styled-components";
+import theme from "./src/theme";
+
 import LoginScreen from "./src/screens/LoginScreen";
 import SignupScreen from "./src/screens/SignupScreen";
 import GoalCreateScreen from "./src/screens/GoalCreateScreen";
@@ -10,9 +13,8 @@ import QuestionsGoalScreen from "./src/screens/QuestionsGoalScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import ListMeta from "./src/screens/ListMeta";
 import GoalCreatePlanScreen from "./src/screens/GoalCreatePlanScreen";
-
 import FinancialGoalsScreen from "./src/screens/FinancialGoalsScreen";
-import { TokenProvider, TokenContext } from "./src/hook/TokenContext";
+import { TokenProvider, TokenContext } from "./src/hook/TokenContext"; // Corrigido o caminho
 
 const Stack = createStackNavigator();
 
@@ -76,9 +78,11 @@ const MainNavigator = () => {
 function App() {
   return (
     <TokenProvider>
-      <NavigationContainer>
-        <MainNavigator />
-      </NavigationContainer>
+      <ThemeProvider theme={theme}>
+        <NavigationContainer>
+          <MainNavigator />
+        </NavigationContainer>
+      </ThemeProvider>
     </TokenProvider>
   );
 }
