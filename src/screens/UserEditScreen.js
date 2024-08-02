@@ -8,10 +8,12 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { TokenContext } from "../hook/TokenContext";
-import { parse, format } from "date-fns";
+import { parseISO, format, parse } from "date-fns";
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const UserEditScreen = ({ navigation }) => {
   const { token, user } = useContext(TokenContext);
@@ -24,24 +26,26 @@ const UserEditScreen = ({ navigation }) => {
   const [fixedIncome, setFixedIncome] = useState(0);
   const [loading, setLoading] = useState(true);
   const [responseMessage, setResponseMessage] = useState("");
+  const [profilePicture, setProfilePicture] = useState(null);
 
   useEffect(() => {
     if (user) {
       console.log("User data:", user);
-      setName(user.name);
-      setEmail(user.email);
+      setName(user.name || "");
+      setEmail(user.email || "");
       if (user.birthday) {
         try {
-          const parsedBirthday = parse(user.birthday, "yyyy-MM-dd HH:mm:ss.SSSSSS", new Date());
+          const parsedBirthday = parseISO(user.birthday);
           setBirthday(format(parsedBirthday, "dd/MM/yyyy"));
         } catch (error) {
           console.error("Error parsing birthday:", error);
         }
       }
-      setRisk(user.risk * 100);
-      setSalary(user.salary.toString());
-      setVariableIncome(user.knowledge?.variable_income * 100);
-      setFixedIncome(user.knowledge?.fixed_income * 100);
+      setRisk(user.risk ? user.risk * 100 : 0);
+      setSalary(user.salary ? user.salary.toString() : "");
+      setVariableIncome(user.knowledge?.variable_income ? user.knowledge.variable_income * 100 : 0);
+      setFixedIncome(user.knowledge?.fixed_income ? user.knowledge.fixed_income * 100 : 0);
+      setProfilePicture(user.picture);
       setLoading(false);
     } else {
       console.log("No user data available");
@@ -56,9 +60,10 @@ const UserEditScreen = ({ navigation }) => {
 
     try {
       const parseBirthday = parse(birthday, "dd/MM/yyyy", new Date());
-      const formattedBirthday = format(parseBirthday, "yyyy-MM-dd HH:mm:ss.SSSSSS");
+      const formattedBirthday = format(parseBirthday, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
       setLoading(true);
+
       const payload = {
         name,
         email,
@@ -69,9 +74,10 @@ const UserEditScreen = ({ navigation }) => {
           variable_income: variableIncome / 100,
           fixed_income: fixedIncome / 100,
         },
+        picture: profilePicture,
       };
 
-      const updateResponse = await fetch("https://fortuna-api.onrender.com/api/users/me", {
+      const updateResponse = await fetch("https://fortuna-api.onrender.com/api/users", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +96,7 @@ const UserEditScreen = ({ navigation }) => {
 
       setResponseMessage("Dados atualizados com sucesso.");
       Alert.alert("Sucesso", "Dados atualizados com sucesso.");
-      navigation.navigate("FinancialGoals");
+      navigation.navigate("Home");
     } catch (error) {
       console.error("Error updating user:", error);
       setResponseMessage("Ocorreu um erro.");
@@ -120,6 +126,18 @@ const UserEditScreen = ({ navigation }) => {
     setSalary(numericValue);
   };
 
+  const handleSelectImage = () => {
+    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.error('ImagePicker Error: ', response.error);
+      } else if (response.assets && response.assets.length > 0) {
+        setProfilePicture(response.assets[0].uri);
+      }
+    });
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -133,6 +151,12 @@ const UserEditScreen = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.headerText}>Edite suas informações</Text>
+        {profilePicture && (
+          <Image source={{ uri: profilePicture }} style={styles.profileImage} />
+        )}
+        <TouchableOpacity style={styles.imagePickerButton} onPress={handleSelectImage}>
+          <Text style={styles.buttonText}>Selecionar Foto</Text>
+        </TouchableOpacity>
         <TextInput
           style={styles.input}
           placeholder="Seu nome"
@@ -283,6 +307,20 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: "#8A2BE2",
+  },
+  profileImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+  imagePickerButton: {
+    backgroundColor: "#8A2BE2",
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 20,
   },
 });
 
