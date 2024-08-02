@@ -11,7 +11,7 @@ import {
   Image,
 } from "react-native";
 import Slider from "@react-native-community/slider";
-import { TokenContext } from "@hook/TokenContext";
+import { TokenContext } from "@hooks/TokenContext";
 import { parseISO, format, parse } from "date-fns";
 import { launchImageLibrary } from "react-native-image-picker";
 
@@ -19,6 +19,8 @@ const UserEditScreen = ({ navigation }) => {
   const { token, user } = useContext(TokenContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
   const [birthday, setBirthday] = useState("");
   const [risk, setRisk] = useState(0);
   const [salary, setSalary] = useState("");
@@ -59,7 +61,7 @@ const UserEditScreen = ({ navigation }) => {
   }, [user]);
 
   const handleUpdate = async () => {
-    if (!name || !email || !birthday || !salary) {
+    if (!name || !email || !birthday || !salary || !password || !oldPassword) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
     }
@@ -74,14 +76,17 @@ const UserEditScreen = ({ navigation }) => {
       setLoading(true);
 
       const payload = {
+        id: user.id,  // Certifique-se de que o ID do usuário está disponível
         name,
         email,
+        password,
+        old_password: oldPassword,
         birthday: formattedBirthday,
-        risk: risk / 100,
-        salary: parseFloat(salary),
+        risk: (risk / 100).toFixed(2),
+        salary: parseFloat(salary).toFixed(2),
         knowledge: {
-          variable_income: variableIncome / 100,
-          fixed_income: fixedIncome / 100,
+          variable_income: (variableIncome / 100).toFixed(2),
+          fixed_income: (fixedIncome / 100).toFixed(2),
         },
         picture: profilePicture,
       };
@@ -186,6 +191,20 @@ const UserEditScreen = ({ navigation }) => {
           placeholder="Seu email"
           value={email}
           onChangeText={setEmail}
+        />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha antiga"
+            value={oldPassword}
+            onChangeText={setOldPassword}
+            secureTextEntry
+          />
+        <TextInput
+          style={styles.input}
+          placeholder="Senha"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
         />
         <TextInput
           style={styles.input}
