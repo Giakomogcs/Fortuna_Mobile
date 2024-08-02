@@ -9,7 +9,7 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { TokenContext } from "../hook/TokenContext";
+import { TokenContext } from "../hooks/TokenContext";
 
 const GoalCreateScreen = ({ navigation }) => {
   const [name, setName] = useState("");

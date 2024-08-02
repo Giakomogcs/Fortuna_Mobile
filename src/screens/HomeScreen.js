@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { TokenContext } from "../hook/TokenContext";
+import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/Header";
 
 const HomeScreen = ({ navigation }) => {

@@ -4,13 +4,16 @@
     "strict": true,
     "baseUrl": "./",
     "paths": {
-      "@assets/*": ["./src/assets/*"],
-
+      "@dtos/*": ["src/dtos/*"],
+      "@assets/*": ["./assets/*"],
       "@components/*": ["./src/components/*"],
-      "@routes/*": ["./src/routes/*"],
       "@screens/*": ["./src/screens/*"],
-      "@theme/*": ["./src/theme/*"],
-      "@hook/*": ["./src/hook/*"]
+      "@storage/*": ["./src/storage/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@services/*": ["./src/services/*"],
+      "@hooks/*": ["./src/hooks/*"],
+      "@contexts/*": ["./src/contexts/*"],
+      "@routes/*": ["./src/routes/*"]
     }
   }
 }

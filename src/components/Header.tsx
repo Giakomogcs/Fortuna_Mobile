@@ -3,7 +3,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { HStack, VStack, Text, Icon, Image } from "native-base";
 import { TouchableOpacity, StyleSheet, Platform } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
-import { TokenContext } from "../hook/TokenContext";
+import { TokenContext } from "../hooks/TokenContext";
 import { MaterialIcons } from "@expo/vector-icons";
 
 type HeaderProps = {

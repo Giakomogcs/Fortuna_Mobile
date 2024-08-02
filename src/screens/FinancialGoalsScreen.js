@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import Slider from "@react-native-community/slider";
-import { TokenContext } from "../hook/TokenContext";
+import { TokenContext } from "../hooks/TokenContext";
 
 const FinancialGoalsScreen = ({ navigation }) => {
   const [risk, setRisk] = useState(0);

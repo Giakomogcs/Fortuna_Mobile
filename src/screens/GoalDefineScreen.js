@@ -8,7 +8,7 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { TokenContext } from "../hook/TokenContext";
+import { TokenContext } from "../hooks/TokenContext";
 
 const GoalDefineScreen = ({ route, navigation }) => {
   const initialGoalData = route.params;

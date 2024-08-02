@@ -10,7 +10,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { TokenContext } from "../hook/TokenContext";
+import { TokenContext } from "../hooks/TokenContext";
 import { parse, format } from "date-fns";
 
 const SignupScreen = ({ navigation }) => {
@@ -26,7 +26,14 @@ const SignupScreen = ({ navigation }) => {
   const { setToken } = useContext(TokenContext);
 
   const handleRegister = async () => {
-    if (!name || !email || !confirmEmail || !password || !confirmPassword || !birthday) {
+    if (
+      !name ||
+      !email ||
+      !confirmEmail ||
+      !password ||
+      !confirmPassword ||
+      !birthday
+    ) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
     }

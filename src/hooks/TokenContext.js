@@ -6,6 +6,8 @@ export const TokenContext = createContext();
 export const TokenProvider = ({ children }) => {
   const [token, setToken] = useState("");
   const [user, setUser] = useState(null);
+  const [isLoadingUserStorageData, setIsLoadingUserStorageData] =
+    useState(true);
 
   useEffect(() => {
     const loadTokenAndUser = async () => {
@@ -22,6 +24,8 @@ export const TokenProvider = ({ children }) => {
         }
       } catch (error) {
         console.error("Failed to load token and user data", error);
+      } finally {
+        setIsLoadingUserStorageData(false);
       }
     };
 
@@ -56,7 +60,13 @@ export const TokenProvider = ({ children }) => {
 
   return (
     <TokenContext.Provider
-      value={{ token, user, setTokenAndUser: saveTokenAndUser, logout }}
+      value={{
+        token,
+        user,
+        setTokenAndUser: saveTokenAndUser,
+        logout,
+        isLoadingUserStorageData,
+      }}
     >
       {children}
     </TokenContext.Provider>
