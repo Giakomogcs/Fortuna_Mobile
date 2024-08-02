@@ -42,7 +42,6 @@ const FinancialGoalsScreen = ({ navigation }) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Response:", data);
         Alert.alert("Sucesso", "Informações enviadas com sucesso!");
         // Navegar para a tela Home
         navigation.navigate("Home");

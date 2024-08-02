@@ -35,8 +35,6 @@ const LoginScreen = ({ navigation }) => {
       );
 
       const responseText = await authResponse.text();
-      console.log("Response Status:", authResponse.status);
-      console.log("Response Text:", responseText);
 
       if (!authResponse.ok) {
         setResponseMessage(`Erro ${authResponse.status}: ${responseText}`);

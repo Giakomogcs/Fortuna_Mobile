@@ -32,7 +32,6 @@ const UserEditScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (user) {
-      console.log("User data:", user);
       setName(user.name || "");
       setEmail(user.email || "");
       if (user.birthday) {
@@ -61,8 +60,16 @@ const UserEditScreen = ({ navigation }) => {
   }, [user]);
 
   const handleUpdate = async () => {
-    if (!name || !email || !birthday || !salary || !password || !oldPassword) {
+    if (!name || !email || !birthday || !salary) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
+    }
+
+    if ((password && !oldPassword) || (!password && oldPassword)) {
+      Alert.alert(
+        "Erro",
+        "Por favor, para trocar a senha precisa dizer a senha atual."
+      );
       return;
     }
 
@@ -76,7 +83,7 @@ const UserEditScreen = ({ navigation }) => {
       setLoading(true);
 
       const payload = {
-        id: user.id,  // Certifique-se de que o ID do usuário está disponível
+        id: user.id, // Certifique-se de que o ID do usuário está disponível
         name,
         email,
         password,
@@ -192,13 +199,13 @@ const UserEditScreen = ({ navigation }) => {
           value={email}
           onChangeText={setEmail}
         />
-          <TextInput
-            style={styles.input}
-            placeholder="Senha antiga"
-            value={oldPassword}
-            onChangeText={setOldPassword}
-            secureTextEntry
-          />
+        <TextInput
+          style={styles.input}
+          placeholder="Senha antiga"
+          value={oldPassword}
+          onChangeText={setOldPassword}
+          secureTextEntry
+        />
         <TextInput
           style={styles.input}
           placeholder="Senha"

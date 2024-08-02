@@ -34,17 +34,6 @@ const HomeScreen = ({ navigation }) => {
           <MaterialIcons name="list" size={50} color="#9a67ea" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.iconBox}>
-          <MaterialIcons name="insert-chart" size={50} color="#9a67ea" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate("UserEditScreen")}
-          style={styles.iconBox}
-        >
-          <MaterialIcons name="person" size={50} color="#9a67ea" />
-        </TouchableOpacity>
-
         <TouchableOpacity onPress={handleLogout} style={styles.iconBox}>
           <MaterialIcons name="logout" size={50} color="#9a67ea" />
         </TouchableOpacity>
