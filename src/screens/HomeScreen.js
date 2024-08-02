@@ -39,7 +39,7 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={() => navigation.navigate("FinancialGoals")}
+          onPress={() => navigation.navigate("UserEditScreen")}
           style={styles.iconBox}
         >
           <MaterialIcons name="person" size={50} color="#9a67ea" />

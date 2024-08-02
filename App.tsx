@@ -16,6 +16,7 @@ import HomeScreen from "@screens/HomeScreen";
 import ListMeta from "@screens/ListMeta";
 import GoalCreatePlanScreen from "@screens/GoalCreatePlanScreen";
 import FinancialGoalsScreen from "@screens/FinancialGoalsScreen";
+import UserEditScreen from "@screens/UserEditScreen";
 import { TokenProvider, TokenContext } from "@hook/TokenContext";
 
 const Stack = createStackNavigator();
@@ -69,6 +70,11 @@ const MainNavigator = () => {
           <Stack.Screen
             name="FinancialGoals"
             component={FinancialGoalsScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="UserEditScreen"
+            component={UserEditScreen}
             options={{ headerShown: false }}
           />
         </>

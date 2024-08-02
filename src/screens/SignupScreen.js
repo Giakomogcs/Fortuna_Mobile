@@ -7,9 +7,10 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { TokenContext } from "../hook/TokenContext"; // Importar o contexto do token
+import { TokenContext } from "../hook/TokenContext";
 import { parse, format } from "date-fns";
 
 const SignupScreen = ({ navigation }) => {
@@ -22,9 +23,13 @@ const SignupScreen = ({ navigation }) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
-  const { setToken } = useContext(TokenContext); // Usar o contexto do token
+  const { setToken } = useContext(TokenContext);
 
   const handleRegister = async () => {
+    if (!name || !email || !confirmEmail || !password || !confirmPassword || !birthday) {
+      Alert.alert("Erro", "Por favor, preencha todos os campos.");
+      return;
+    }
     if (email !== confirmEmail) {
       setResponseMessage("Emails não coincidem.");
       Alert.alert("Erro", "Os emails não coincidem.");
@@ -92,11 +97,11 @@ const SignupScreen = ({ navigation }) => {
 
       const loginData = await loginResponse.json();
       const token = loginData.token;
-      setToken(token); // Armazenar o token no contexto
+      setToken(token);
       setResponseMessage("Cadastro e login realizados com sucesso.");
       Alert.alert("Sucesso", "Cadastro e login realizados com sucesso.");
 
-      navigation.navigate("FinancialGoals"); // Redirecionar para FinancialGoalsScreen
+      navigation.navigate("FinancialGoals");
     } catch (error) {
       setResponseMessage("Ocorreu um erro.");
       Alert.alert("Erro", "Ocorreu um erro.");
@@ -105,8 +110,8 @@ const SignupScreen = ({ navigation }) => {
     }
   };
 
-  const formatbirthday = (text) => {
-    const cleaned = text.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
+  const formatBirthday = (text) => {
+    const cleaned = text.replace(/\D/g, "");
     let formatted = "";
 
     if (cleaned.length <= 2) {
@@ -190,8 +195,8 @@ const SignupScreen = ({ navigation }) => {
           style={styles.input}
           placeholder="Data de nascimento (DD/MM/YYYY)"
           value={birthday}
-          onChangeText={formatbirthday}
-          maxLength={10} // Limitando o comprimento máximo do texto
+          onChangeText={formatBirthday}
+          maxLength={10}
           keyboardType="numeric"
         />
         <TouchableOpacity
@@ -199,7 +204,11 @@ const SignupScreen = ({ navigation }) => {
           onPress={handleRegister}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>Criar sua conta</Text>
+          {loading ? (
+            <ActivityIndicator size="small" color="#fff" />
+          ) : (
+            <Text style={styles.buttonText}>Criar sua conta</Text>
+          )}
         </TouchableOpacity>
         {responseMessage ? (
           <Text style={styles.responseMessage}>{responseMessage}</Text>
@@ -218,10 +227,10 @@ const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
+    justifyContent: "center",
     backgroundColor: "#fff",
   },
   formContainer: {
-    marginTop: "40%",
     padding: 20,
   },
   headerText: {
