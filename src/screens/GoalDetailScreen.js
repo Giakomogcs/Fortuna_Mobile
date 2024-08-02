@@ -23,7 +23,8 @@ const GoalDetailScreen = ({ route }) => {
           }
         );
         const data = await response.json();
-        setGoal(data);
+        console.log(data); // Adicionado para verificar a estrutura dos dados recebidos
+        setGoal(data[0]); // Acessando o primeiro elemento do array
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -31,10 +32,14 @@ const GoalDetailScreen = ({ route }) => {
     };
 
     fetchGoalDetails();
-  }, [goalId]);
+  }, [goalId, token]);
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
+  }
+
+  if (!goal) {
+    return <Text>Goal not found</Text>;
   }
 
   return (
@@ -53,75 +58,44 @@ const GoalDetailScreen = ({ route }) => {
       >
         Ver Plano
       </Button>
+    
       <Divider style={{ marginVertical: 10 }} />
 
-      <List.Accordion
-        title="Fonte de Renda Adicional"
-        left={(props) => <List.Icon {...props} icon="currency-usd" />}
-      >
-        {goal.planning.additional_income_sources.map((item, index) => (
-          <List.Item key={index} title={item} />
-        ))}
-      </List.Accordion>
-      <Divider style={{ marginVertical: 10 }} />
-
-      <List.Accordion
-        title="Plano de Contingência"
-        left={(props) => <List.Icon {...props} icon="alert-circle" />}
-      >
-        {goal.planning.contingency_plan.map((item, index) => (
-          <List.Item key={index} title={item} />
-        ))}
-      </List.Accordion>
-      <Divider style={{ marginVertical: 10 }} />
-
-      <List.Accordion
-        title="Ajustes de Monitoramento"
-        left={(props) => <List.Icon {...props} icon="chart-line" />}
-      >
-        {goal.planning.monitoring_adjustments.map((item, index) => (
-          <List.Item key={index} title={item} />
-        ))}
-      </List.Accordion>
-      <Divider style={{ marginVertical: 10 }} />
-
-      <List.Accordion
-        title="Dicas de Economia"
-        left={(props) => <List.Icon {...props} icon="lightbulb" />}
-      >
-        {goal.planning.savings_tips.map((item, index) => (
-          <List.Item key={index} title={item} />
-        ))}
-      </List.Accordion>
-      <Divider style={{ marginVertical: 10 }} />
-
-      <List.Accordion
-        title="Recursos"
-        left={(props) => <List.Icon {...props} icon="book" />}
-      >
-        {goal.planning.resources.map((item, index) => (
-          <List.Item key={index} title={item} />
-        ))}
-      </List.Accordion>
-      <Divider style={{ marginVertical: 10 }} />
-
-      <List.Accordion
-        title="Etapas"
-        left={(props) => <List.Icon {...props} icon="steps" />}
-      >
-        {goal.planning.steps.map((step, index) => (
-          <View key={index}>
-            <Text style={{ fontWeight: "bold", marginTop: 10 }}>
-              Etapa {step.step}: {step.description}
-            </Text>
-            <Text>Timeline: {step.timeline}</Text>
-            {step.actions.map((action, actionIndex) => (
-              <Text key={actionIndex}>- {action}</Text>
+      {goal.planning && (
+        <>
+          <List.Accordion
+            title="Recursos"
+            left={(props) => <List.Icon {...props} icon="book" />}
+          >
+            {goal.planning.resources.map((item, index) => (
+              <List.Item
+                key={index}
+                title={item.resource}
+                description={item.description}
+              />
             ))}
-            <Divider style={{ marginVertical: 10 }} />
-          </View>
-        ))}
-      </List.Accordion>
+          </List.Accordion>
+          <Divider style={{ marginVertical: 10 }} />
+
+          <List.Accordion
+            title="Etapas"
+            left={(props) => <List.Icon {...props} icon="steps" />}
+          >
+            {goal.planning.steps.map((step, index) => (
+              <View key={index}>
+                <Text style={{ fontWeight: "bold", marginTop: 10 }}>
+                  Etapa {step.step}: {step.description}
+                </Text>
+                <Text>Contexto: {step.context}</Text>
+                <Text>Prazo: {step.deadline}</Text>
+                <Text>Responsável: {step.responsible}</Text>
+                <Text>Indicador de Sucesso: {step.success_indicator}</Text>
+                <Divider style={{ marginVertical: 10 }} />
+              </View>
+            ))}
+          </List.Accordion>
+        </>
+      )}
     </ScrollView>
   );
 };
