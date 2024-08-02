@@ -11,9 +11,9 @@ import {
   Image,
 } from "react-native";
 import Slider from "@react-native-community/slider";
-import { TokenContext } from "../hook/TokenContext";
+import { TokenContext } from "@hook/TokenContext";
 import { parseISO, format, parse } from "date-fns";
-import { launchImageLibrary } from 'react-native-image-picker';
+import { launchImageLibrary } from "react-native-image-picker";
 
 const UserEditScreen = ({ navigation }) => {
   const { token, user } = useContext(TokenContext);
@@ -43,8 +43,14 @@ const UserEditScreen = ({ navigation }) => {
       }
       setRisk(user.risk ? user.risk * 100 : 0);
       setSalary(user.salary ? user.salary.toString() : "");
-      setVariableIncome(user.knowledge?.variable_income ? user.knowledge.variable_income * 100 : 0);
-      setFixedIncome(user.knowledge?.fixed_income ? user.knowledge.fixed_income * 100 : 0);
+      setVariableIncome(
+        user.knowledge?.variable_income
+          ? user.knowledge.variable_income * 100
+          : 0
+      );
+      setFixedIncome(
+        user.knowledge?.fixed_income ? user.knowledge.fixed_income * 100 : 0
+      );
       setProfilePicture(user.picture);
       setLoading(false);
     } else {
@@ -60,7 +66,10 @@ const UserEditScreen = ({ navigation }) => {
 
     try {
       const parseBirthday = parse(birthday, "dd/MM/yyyy", new Date());
-      const formattedBirthday = format(parseBirthday, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+      const formattedBirthday = format(
+        parseBirthday,
+        "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+      );
 
       setLoading(true);
 
@@ -77,14 +86,17 @@ const UserEditScreen = ({ navigation }) => {
         picture: profilePicture,
       };
 
-      const updateResponse = await fetch("https://fortuna-api.onrender.com/api/users", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(payload),
-      });
+      const updateResponse = await fetch(
+        "https://fortuna-api.onrender.com/api/users",
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       const updateData = await updateResponse.json();
 
@@ -115,7 +127,10 @@ const UserEditScreen = ({ navigation }) => {
     } else if (cleaned.length <= 4) {
       formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
     } else {
-      formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
+      formatted = `${cleaned.slice(0, 2)}/${cleaned.slice(
+        2,
+        4
+      )}/${cleaned.slice(4, 8)}`;
     }
 
     setBirthday(formatted);
@@ -127,11 +142,11 @@ const UserEditScreen = ({ navigation }) => {
   };
 
   const handleSelectImage = () => {
-    launchImageLibrary({ mediaType: 'photo' }, (response) => {
+    launchImageLibrary({ mediaType: "photo" }, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log("User cancelled image picker");
       } else if (response.error) {
-        console.error('ImagePicker Error: ', response.error);
+        console.error("ImagePicker Error: ", response.error);
       } else if (response.assets && response.assets.length > 0) {
         setProfilePicture(response.assets[0].uri);
       }
@@ -154,7 +169,10 @@ const UserEditScreen = ({ navigation }) => {
         {profilePicture && (
           <Image source={{ uri: profilePicture }} style={styles.profileImage} />
         )}
-        <TouchableOpacity style={styles.imagePickerButton} onPress={handleSelectImage}>
+        <TouchableOpacity
+          style={styles.imagePickerButton}
+          onPress={handleSelectImage}
+        >
           <Text style={styles.buttonText}>Selecionar Foto</Text>
         </TouchableOpacity>
         <TextInput
@@ -224,7 +242,11 @@ const UserEditScreen = ({ navigation }) => {
           thumbTintColor="#9a67ea"
         />
         <Text style={styles.percentage}>{fixedIncome}%</Text>
-        <TouchableOpacity style={styles.button} onPress={handleUpdate} disabled={loading}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleUpdate}
+          disabled={loading}
+        >
           {loading ? (
             <ActivityIndicator size="small" color="#fff" />
           ) : (
