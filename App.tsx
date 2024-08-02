@@ -7,6 +7,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ThemeProvider } from "styled-components";
 import theme from "./src/theme";
 
+import GoalDetailScreen from '@screens/GoalDetailScreen'; 
 import LoginScreen from "@screens/LoginScreen";
 import SignupScreen from "@screens/SignupScreen";
 import GoalCreateScreen from "@screens/GoalCreateScreen";
@@ -77,6 +78,7 @@ const MainNavigator = () => {
             component={UserEditScreen}
             options={{ headerShown: false }}
           />
+          <Stack.Screen name="GoalDetail" component={GoalDetailScreen} />
         </>
       )}
     </Stack.Navigator>

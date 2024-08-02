@@ -1,6 +1,6 @@
 import React, { useState, useEffect,useContext } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, Button } from 'react-native';
-import { TokenContext } from "../hook/TokenContext";
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, Alert, Button,TouchableOpacity  } from 'react-native';
+import { TokenContext } from "@hook/TokenContext";
 
 const ListMeta = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -102,14 +102,16 @@ const ListMeta = ({ navigation }) => {
   }, [error]);
 
   const renderGoal = ({ item }) => (
-    <View style={styles.goalContainer}>
-      <Text style={styles.goalName}>{item.name}</Text>
-      <Text>Patrimônio: R${item.patrimony}</Text>
-      <Text>Meu Patrimônio: R${item.my_patrimony}</Text>
-      <Text>Dividends: R${item.dividends}</Text>
-      <Text>Aporte Mensal: R${item.monthly_aport}</Text>
-      <Text>Tempo Desejado: {item.time_desired} anos</Text>
-    </View>
+    <TouchableOpacity onPress={() => navigation.navigate('GoalDetail', { goalId: item.id })}>
+      <View style={styles.goalContainer}>
+        <Text style={styles.goalName}>{item.name}</Text>
+        <Text>Patrimônio: R${item.patrimony}</Text>
+        <Text>Meu Patrimônio: R${item.my_patrimony}</Text>
+        <Text>Dividends: R${item.dividends}</Text>
+        <Text>Aporte Mensal: R${item.monthly_aport}</Text>
+        <Text>Tempo Desejado: {item.time_desired} anos</Text>
+      </View>
+    </TouchableOpacity>
   );
 
   const handleCreateGoal = () => {
