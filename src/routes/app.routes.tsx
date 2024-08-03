@@ -47,7 +47,11 @@ const AppRoutes = () => {
         component={UserEditScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name="GoalDetail" component={GoalDetailScreen} />
+      <Stack.Screen
+        name="GoalDetail"
+        component={GoalDetailScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 };
