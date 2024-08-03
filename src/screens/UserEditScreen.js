@@ -13,10 +13,19 @@ import {
 import Slider from "@react-native-community/slider";
 import { TokenContext } from "@hooks/TokenContext";
 import { parseISO, format, parse } from "date-fns";
-import { launchImageLibrary } from "react-native-image-picker";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+
+const getInitials = (name) => {
+  const initials = name
+    .split(" ")
+    .map((part) => part[0])
+    .join("");
+  return initials.substring(0, 2).toUpperCase();
+};
 
 const UserEditScreen = ({ navigation }) => {
-  const { token, user } = useContext(TokenContext);
+  const { token, user: contextUser, updateUser } = useContext(TokenContext);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,37 +36,63 @@ const UserEditScreen = ({ navigation }) => {
   const [variableIncome, setVariableIncome] = useState(0);
   const [fixedIncome, setFixedIncome] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
   const [profilePicture, setProfilePicture] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      setName(user.name || "");
-      setEmail(user.email || "");
-      if (user.birthday) {
-        try {
-          const parsedBirthday = parseISO(user.birthday);
-          setBirthday(format(parsedBirthday, "dd/MM/yyyy"));
-        } catch (error) {
-          console.error("Error parsing birthday:", error);
-        }
+    if (contextUser) {
+      setName(contextUser.name || "");
+      setEmail(contextUser.email || "");
+      if (contextUser.birthday) {
+        const parsedBirthday = parseISO(contextUser.birthday);
+        setBirthday(format(parsedBirthday, "dd/MM/yyyy"));
       }
-      setRisk(user.risk ? user.risk * 100 : 0);
-      setSalary(user.salary ? user.salary.toString() : "");
+      setRisk(contextUser.risk ? contextUser.risk * 100 : 0);
+      setSalary(contextUser.salary ? contextUser.salary.toString() : "");
+      const knowledge = JSON.parse(contextUser.knowledge || "{}");
       setVariableIncome(
-        user.knowledge?.variable_income
-          ? user.knowledge.variable_income * 100
+        knowledge.variable_income
+          ? parseFloat(knowledge.variable_income) * 100
           : 0
       );
       setFixedIncome(
-        user.knowledge?.fixed_income ? user.knowledge.fixed_income * 100 : 0
+        knowledge.fixed_income ? parseFloat(knowledge.fixed_income) * 100 : 0
       );
-      setProfilePicture(user.picture);
+      setProfilePicture(contextUser.picture);
+      if (contextUser.picture) {
+        fetchProfileImage(contextUser.picture);
+      }
       setLoading(false);
     } else {
       console.log("No user data available");
     }
-  }, [user]);
+  }, [contextUser]);
+
+  const fetchProfileImage = async (picture) => {
+    setImageLoading(true);
+    try {
+      const response = await fetch(
+        `https://fortuna-api.onrender.com/api/files/${picture}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (response.ok) {
+        setProfileImageUrl(response.url);
+      } else {
+        throw new Error("Failed to fetch profile image");
+      }
+    } catch (error) {
+      console.error("Error fetching profile image:", error);
+    } finally {
+      setImageLoading(false);
+    }
+  };
 
   const handleUpdate = async () => {
     if (!name || !email || !birthday || !salary) {
@@ -83,23 +118,23 @@ const UserEditScreen = ({ navigation }) => {
       setLoading(true);
 
       const payload = {
-        id: user.id, // Certifique-se de que o ID do usuário está disponível
+        id: contextUser.id,
         name,
         email,
         password,
         old_password: oldPassword,
         birthday: formattedBirthday,
         risk: (risk / 100).toFixed(2),
-        salary: parseFloat(salary).toFixed(2),
-        knowledge: {
+        salary,
+        knowledge: JSON.stringify({
           variable_income: (variableIncome / 100).toFixed(2),
           fixed_income: (fixedIncome / 100).toFixed(2),
-        },
+        }),
         picture: profilePicture,
       };
 
       const updateResponse = await fetch(
-        "https://fortuna-api.onrender.com/api/users",
+        `https://fortuna-api.onrender.com/api/users`,
         {
           method: "PUT",
           headers: {
@@ -110,16 +145,21 @@ const UserEditScreen = ({ navigation }) => {
         }
       );
 
-      const updateData = await updateResponse.json();
+      const responseText = await updateResponse.text();
 
       if (!updateResponse.ok) {
-        setResponseMessage(updateData.message || "Failed to update.");
+        setResponseMessage(responseText || "Failed to update.");
         setLoading(false);
         return;
       }
 
+      const updateData = JSON.parse(responseText);
+
+      // Atualizar usuário no contexto
+      updateUser(updateData);
+
       setResponseMessage("Dados atualizados com sucesso.");
-      Alert.alert("Sucesso", "Dados atualizados com sucesso.");
+
       navigation.navigate("Home");
     } catch (error) {
       console.error("Error updating user:", error);
@@ -127,6 +167,72 @@ const UserEditScreen = ({ navigation }) => {
       Alert.alert("Erro", "Ocorreu um erro.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleImageUpload = async (uri) => {
+    setImageLoading(true);
+    const fileInfo = await FileSystem.getInfoAsync(uri);
+    const fileExtension = uri.split(".").pop();
+    const formData = new FormData();
+
+    formData.append("picture", {
+      uri,
+      name: `profile-picture.${fileExtension}`,
+      type: `image/${fileExtension}`,
+    });
+
+    try {
+      const response = await fetch(
+        "https://fortuna-api.onrender.com/api/users/picture",
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+          body: formData,
+        }
+      );
+
+      const responseText = await response.text();
+
+      if (!response.ok) {
+        throw new Error(responseText || "Failed to upload image");
+      }
+
+      const data = JSON.parse(responseText);
+
+      setProfilePicture(data.picture); // Assuming the response contains the updated picture name
+      fetchProfileImage(data.picture); // Fetch the updated profile image
+      Alert.alert("Sucesso", "Imagem atualizada com sucesso.");
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao enviar a imagem.");
+      console.error(error);
+    } finally {
+      setImageLoading(false);
+    }
+  };
+
+  const handleSelectImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const { uri } = result.assets[0];
+      const fileInfo = await FileSystem.getInfoAsync(uri);
+
+      if (fileInfo.size / 1024 / 1024 > 10) {
+        // Configura o limite máximo para 10 MB
+        Alert.alert("Erro", "A imagem deve ter no máximo 10MB.");
+        return;
+      }
+
+      await handleImageUpload(uri);
     }
   };
 
@@ -148,23 +254,6 @@ const UserEditScreen = ({ navigation }) => {
     setBirthday(formatted);
   };
 
-  const handleSalaryChange = (value) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    setSalary(numericValue);
-  };
-
-  const handleSelectImage = () => {
-    launchImageLibrary({ mediaType: "photo" }, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled image picker");
-      } else if (response.error) {
-        console.error("ImagePicker Error: ", response.error);
-      } else if (response.assets && response.assets.length > 0) {
-        setProfilePicture(response.assets[0].uri);
-      }
-    });
-  };
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -178,8 +267,19 @@ const UserEditScreen = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.formContainer}>
         <Text style={styles.headerText}>Edite suas informações</Text>
-        {profilePicture && (
-          <Image source={{ uri: profilePicture }} style={styles.profileImage} />
+        {imageLoading ? (
+          <ActivityIndicator size="large" color="#8A2BE2" />
+        ) : profileImageUrl ? (
+          <Image
+            source={{
+              uri: profileImageUrl,
+            }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <View style={styles.initialsContainer}>
+            <Text style={styles.initialsText}>{getInitials(name)}</Text>
+          </View>
         )}
         <TouchableOpacity
           style={styles.imagePickerButton}
@@ -234,11 +334,12 @@ const UserEditScreen = ({ navigation }) => {
           thumbTintColor="#9a67ea"
         />
         <Text style={styles.percentage}>{risk}%</Text>
+        <Text style={styles.subLabel}>Salário</Text>
         <TextInput
           style={styles.input}
           placeholder="Salário"
           value={salary}
-          onChangeText={handleSalaryChange}
+          onChangeText={setSalary}
           keyboardType="numeric"
         />
         <Text style={styles.label}>Conhecimento em:</Text>
@@ -362,6 +463,21 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignSelf: "center",
     marginBottom: 20,
+  },
+  initialsContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#ccc",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    marginBottom: 20,
+  },
+  initialsText: {
+    color: "#fff",
+    fontSize: 40,
+    fontWeight: "bold",
   },
   imagePickerButton: {
     backgroundColor: "#8A2BE2",

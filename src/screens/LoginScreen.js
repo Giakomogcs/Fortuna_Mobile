@@ -62,7 +62,7 @@ const LoginScreen = ({ navigation }) => {
     if (token) {
       navigation.navigate("Home");
     }
-  }, [token]);
+  }, [token, navigation]);
 
   return (
     <View style={styles.container}>

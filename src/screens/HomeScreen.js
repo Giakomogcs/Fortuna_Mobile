@@ -5,11 +5,28 @@ import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/Header";
 
 const HomeScreen = ({ navigation }) => {
-  const { logout } = useContext(TokenContext);
+  const { logout, user } = useContext(TokenContext);
+
+  console.log(user);
 
   const handleLogout = () => {
-    Alert.alert("Logout", "Você saiu da sua conta.");
-    logout(); // Remover o token
+    Alert.alert(
+      "Logout",
+      "Você deseja sair da sua conta?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Sim",
+          onPress: () => {
+            logout(); // Remover o token
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   return (

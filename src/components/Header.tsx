@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HStack, VStack, Text, Icon, Image } from "native-base";
-import { TouchableOpacity, StyleSheet, Platform } from "react-native";
+import { TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TokenContext } from "../hooks/TokenContext";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -30,9 +30,11 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
           onPress={() => navigation.navigate("UserEditScreen")}
           style={styles.userContainer}
         >
-          {user?.photoUrl ? (
+          {user?.picture ? (
             <Image
-              source={{ uri: user.photoUrl }}
+              source={{
+                uri: `https://fortuna-api.onrender.com/api/files/${user.picture}`,
+              }}
               alt="User Photo"
               style={styles.userPhoto}
             />
@@ -95,11 +97,6 @@ const styles = StyleSheet.create({
   greetingText: {
     color: "#fff",
     fontSize: 16,
-  },
-  userNameText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
   },
   refreshButton: {
     padding: 10,

@@ -12,7 +12,7 @@ import { TokenContext } from "../hooks/TokenContext";
 
 const FinancialGoalsScreen = ({ navigation }) => {
   const [risk, setRisk] = useState(0);
-  const [salary, setSalary] = useState("");
+  const [salary, setSalary] = useState(0);
   const [variableIncome, setVariableIncome] = useState(0);
   const [fixedIncome, setFixedIncome] = useState(0);
   const { token } = useContext(TokenContext);
@@ -20,7 +20,7 @@ const FinancialGoalsScreen = ({ navigation }) => {
   const handleConfirm = async () => {
     const payload = {
       risk: risk / 100,
-      salary: parseFloat(salary),
+      salary,
       knowledge: {
         variable_income: variableIncome / 100,
         fixed_income: fixedIncome / 100,
@@ -55,11 +55,6 @@ const FinancialGoalsScreen = ({ navigation }) => {
     }
   };
 
-  const handleSalaryChange = (value) => {
-    const numericValue = value.replace(/[^0-9]/g, "");
-    setSalary(numericValue);
-  };
-
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Risco</Text>
@@ -75,11 +70,12 @@ const FinancialGoalsScreen = ({ navigation }) => {
         thumbTintColor="#9a67ea"
       />
       <Text style={styles.percentage}>{risk}%</Text>
+      <Text style={styles.subLabel}>Salário</Text>
       <TextInput
         style={styles.input}
         placeholder="Salário"
         value={salary}
-        onChangeText={handleSalaryChange}
+        onChangeText={setSalary}
         keyboardType="numeric"
       />
       <Text style={styles.label}>Conhecimento em:</Text>

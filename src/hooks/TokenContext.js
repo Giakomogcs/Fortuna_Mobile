@@ -43,6 +43,18 @@ export const TokenProvider = ({ children }) => {
     }
   };
 
+  const updateUser = async (updatedUser) => {
+    try {
+      if (typeof updatedUser.knowledge === "string") {
+        updatedUser.knowledge = JSON.parse(updatedUser.knowledge);
+      }
+      await AsyncStorage.setItem("userData", JSON.stringify(updatedUser));
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Failed to update user data", error);
+    }
+  };
+
   const removeTokenAndUser = async () => {
     try {
       await AsyncStorage.removeItem("userToken");
@@ -64,6 +76,7 @@ export const TokenProvider = ({ children }) => {
         token,
         user,
         setTokenAndUser: saveTokenAndUser,
+        updateUser,
         logout,
         isLoadingUserStorageData,
       }}
