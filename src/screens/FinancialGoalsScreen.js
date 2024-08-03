@@ -6,6 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import Slider from "@react-native-community/slider";
 import { TokenContext } from "../hooks/TokenContext";
@@ -15,7 +17,7 @@ const FinancialGoalsScreen = ({ navigation }) => {
   const [salary, setSalary] = useState(0);
   const [variableIncome, setVariableIncome] = useState(0);
   const [fixedIncome, setFixedIncome] = useState(0);
-  const { token } = useContext(TokenContext);
+  const { token, user, updateUser } = useContext(TokenContext);
 
   const handleConfirm = async () => {
     const payload = {
@@ -42,7 +44,8 @@ const FinancialGoalsScreen = ({ navigation }) => {
 
       if (response.ok) {
         const data = await response.json();
-        Alert.alert("Sucesso", "Informações enviadas com sucesso!");
+        // Atualizar o usuário no contexto
+        updateUser({ ...user, ...payload });
         // Navegar para a tela Home
         navigation.navigate("Home");
       } else {
@@ -56,59 +59,61 @@ const FinancialGoalsScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Risco</Text>
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={100}
-        step={1}
-        value={risk}
-        onValueChange={setRisk}
-        minimumTrackTintColor="#9a67ea"
-        maximumTrackTintColor="#ccc"
-        thumbTintColor="#9a67ea"
-      />
-      <Text style={styles.percentage}>{risk}%</Text>
-      <Text style={styles.subLabel}>Salário</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Salário"
-        value={salary}
-        onChangeText={setSalary}
-        keyboardType="numeric"
-      />
-      <Text style={styles.label}>Conhecimento em:</Text>
-      <Text style={styles.subLabel}>Renda Variável</Text>
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={100}
-        step={1}
-        value={variableIncome}
-        onValueChange={setVariableIncome}
-        minimumTrackTintColor="#9a67ea"
-        maximumTrackTintColor="#ccc"
-        thumbTintColor="#9a67ea"
-      />
-      <Text style={styles.percentage}>{variableIncome}%</Text>
-      <Text style={styles.subLabel}>Renda Fixa</Text>
-      <Slider
-        style={styles.slider}
-        minimumValue={0}
-        maximumValue={100}
-        step={1}
-        value={fixedIncome}
-        onValueChange={setFixedIncome}
-        minimumTrackTintColor="#9a67ea"
-        maximumTrackTintColor="#ccc"
-        thumbTintColor="#9a67ea"
-      />
-      <Text style={styles.percentage}>{fixedIncome}%</Text>
-      <TouchableOpacity style={styles.button} onPress={handleConfirm}>
-        <Text style={styles.buttonText}>Confirmar</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <Text style={styles.label}>Risco</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={100}
+          step={1}
+          value={risk}
+          onValueChange={setRisk}
+          minimumTrackTintColor="#9a67ea"
+          maximumTrackTintColor="#ccc"
+          thumbTintColor="#9a67ea"
+        />
+        <Text style={styles.percentage}>{risk}%</Text>
+        <Text style={styles.subLabel}>Salário</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Salário"
+          value={salary}
+          onChangeText={setSalary}
+          keyboardType="numeric"
+        />
+        <Text style={styles.label}>Conhecimento em:</Text>
+        <Text style={styles.subLabel}>Renda Variável</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={100}
+          step={1}
+          value={variableIncome}
+          onValueChange={setVariableIncome}
+          minimumTrackTintColor="#9a67ea"
+          maximumTrackTintColor="#ccc"
+          thumbTintColor="#9a67ea"
+        />
+        <Text style={styles.percentage}>{variableIncome}%</Text>
+        <Text style={styles.subLabel}>Renda Fixa</Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={100}
+          step={1}
+          value={fixedIncome}
+          onValueChange={setFixedIncome}
+          minimumTrackTintColor="#9a67ea"
+          maximumTrackTintColor="#ccc"
+          thumbTintColor="#9a67ea"
+        />
+        <Text style={styles.percentage}>{fixedIncome}%</Text>
+        <TouchableOpacity style={styles.button} onPress={handleConfirm}>
+          <Text style={styles.buttonText}>Confirmar</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

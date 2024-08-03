@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TokenContext } from "../hooks/TokenContext";
@@ -6,8 +6,13 @@ import Header from "../components/Header";
 
 const HomeScreen = ({ navigation }) => {
   const { logout, user } = useContext(TokenContext);
-
   console.log(user);
+
+  useEffect(() => {
+    if (!user || !user.knowledge || user.knowledge.length === 0) {
+      navigation.navigate("FinancialGoals");
+    }
+  }, [user, navigation]);
 
   const handleLogout = () => {
     Alert.alert(
@@ -29,11 +34,15 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <Header title="Fortuna" />
       <View style={styles.welcomeContainer}>
-        <Text style={styles.welcomeText}>Nome de usuário,</Text>
+        <Text style={styles.welcomeText}>{user.name},</Text>
         <Text style={styles.welcomeBackText}>Seja bem vindo</Text>
       </View>
       <View style={styles.iconContainer}>

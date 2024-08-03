@@ -51,7 +51,7 @@ const UserEditScreen = ({ navigation }) => {
       }
       setRisk(contextUser.risk ? contextUser.risk * 100 : 0);
       setSalary(contextUser.salary ? contextUser.salary.toString() : "");
-      const knowledge = JSON.parse(contextUser.knowledge || "{}");
+      const knowledge = contextUser.knowledge || {};
       setVariableIncome(
         knowledge.variable_income
           ? parseFloat(knowledge.variable_income) * 100
@@ -126,10 +126,10 @@ const UserEditScreen = ({ navigation }) => {
         birthday: formattedBirthday,
         risk: (risk / 100).toFixed(2),
         salary,
-        knowledge: JSON.stringify({
+        knowledge: {
           variable_income: (variableIncome / 100).toFixed(2),
           fixed_income: (fixedIncome / 100).toFixed(2),
-        }),
+        },
         picture: profilePicture,
       };
 
@@ -205,7 +205,6 @@ const UserEditScreen = ({ navigation }) => {
 
       setProfilePicture(data.picture); // Assuming the response contains the updated picture name
       fetchProfileImage(data.picture); // Fetch the updated profile image
-      Alert.alert("Sucesso", "Imagem atualizada com sucesso.");
     } catch (error) {
       Alert.alert("Erro", "Falha ao enviar a imagem.");
       console.error(error);
@@ -228,7 +227,7 @@ const UserEditScreen = ({ navigation }) => {
 
       if (fileInfo.size / 1024 / 1024 > 10) {
         // Configura o limite máximo para 10 MB
-        Alert.alert("Erro", "A imagem deve ter no máximo 10MB.");
+        Alert.alert("Erro", "A imagem deve ter no máximo 45MB.");
         return;
       }
 

@@ -105,10 +105,6 @@ const SignupScreen = ({ navigation }) => {
       const loginData = await loginResponse.json();
       const token = loginData.token;
       setToken(token);
-      setResponseMessage("Cadastro e login realizados com sucesso.");
-      Alert.alert("Sucesso", "Cadastro e login realizados com sucesso.");
-
-      navigation.navigate("FinancialGoals");
     } catch (error) {
       setResponseMessage("Ocorreu um erro.");
       Alert.alert("Erro", "Ocorreu um erro.");
