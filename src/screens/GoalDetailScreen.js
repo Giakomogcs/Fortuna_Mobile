@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, ActivityIndicator, ScrollView } from "react-native";
+import { View, Text, ActivityIndicator, ScrollView, Alert } from "react-native";
 import { TokenContext } from "@hooks/TokenContext";
 import { Button, Divider, List } from "react-native-paper";
 
@@ -9,30 +9,64 @@ const GoalDetailScreen = ({ route }) => {
   const [loading, setLoading] = useState(true);
   const { token } = useContext(TokenContext);
 
-  useEffect(() => {
-    const fetchGoalDetails = async () => {
-      try {
-        const response = await fetch(
-          `https://fortuna-api.onrender.com/api/goals/${goalId}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const data = await response.json();
-        console.log(data); // Adicionado para verificar a estrutura dos dados recebidos
-        setGoal(data[0]); // Acessando o primeiro elemento do array
-        setLoading(false);
-      } catch (error) {
-        console.error(error);
-      }
-    };
+  const fetchGoalDetails = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://fortuna-api.onrender.com/api/goals/${goalId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await response.json();
+      console.log('data ->>>> ', data);
+      setGoal(data[0]);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erro", "Falha ao buscar os detalhes da meta.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchGoalDetails();
   }, [goalId, token]);
+
+  const handleRefresh = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `https://fortuna-api.onrender.com/api/gemini/plan/${goalId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Error response data:", errorData);
+        throw new Error("Failed to fetch goal data");
+      }
+
+      const data = await response.json();
+      console.log('Refreshed data ->>>> ', data); 
+      setGoal(data);
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao buscar os dados da meta.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (loading) {
     return <ActivityIndicator size="large" color="#0000ff" />;
@@ -51,27 +85,23 @@ const GoalDetailScreen = ({ route }) => {
       <Text>Dividendos: {goal.dividends}</Text>
       <Text>Rendimento: {goal.rate}</Text>
       <Text>Status: {goal.status ? "Concluída" : "Em Andamento"}</Text>
-      <Button
-        mode="contained"
-        onPress={() => alert("Exibir plano de ação")}
-        style={{ marginVertical: 10 }}
-      >
-        Ver Plano
+
+      <Button onPress={handleRefresh} mode="contained" style={{ marginTop: 20 }}>
+        Refresh Meta
       </Button>
-    
+
       <Divider style={{ marginVertical: 10 }} />
 
-      {goal.planning && (
+      {goal?.planning && (
         <>
           <List.Accordion
             title="Recursos"
             left={(props) => <List.Icon {...props} icon="book" />}
           >
-            {goal.planning.resources.map((item, index) => (
+            {goal?.planning?.resources?.map((item, index) => (
               <List.Item
                 key={index}
-                title={item.resource}
-                description={item.description}
+                description={item}
               />
             ))}
           </List.Accordion>
@@ -81,7 +111,7 @@ const GoalDetailScreen = ({ route }) => {
             title="Etapas"
             left={(props) => <List.Icon {...props} icon="steps" />}
           >
-            {goal.planning.steps.map((step, index) => (
+            {goal?.planning?.steps?.map((step, index) => (
               <View key={index}>
                 <Text style={{ fontWeight: "bold", marginTop: 10 }}>
                   Etapa {step.step}: {step.description}
@@ -92,6 +122,18 @@ const GoalDetailScreen = ({ route }) => {
                 <Text>Indicador de Sucesso: {step.success_indicator}</Text>
                 <Divider style={{ marginVertical: 10 }} />
               </View>
+            ))}
+          </List.Accordion>
+
+          <List.Accordion
+            title="Ajustes de Monitoramento"
+            left={(props) => <List.Icon {...props} icon="adjust" />}
+          >
+            {goal?.planning?.monitoring_adjustments?.map((adjustment, index) => (
+              <List.Item
+                key={index}
+                description={adjustment}
+              />
             ))}
           </List.Accordion>
         </>
