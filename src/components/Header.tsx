@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HStack, VStack, Text, Icon, Image } from "native-base";
 import { TouchableOpacity, StyleSheet } from "react-native";
@@ -21,7 +21,8 @@ const getInitials = (name: string): string => {
 
 const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
   const navigation = useNavigation<NavigationProp<any>>();
-  const { user } = useContext(TokenContext);
+  const { user, logout } = useContext(TokenContext);
+  const [imageError, setImageError] = useState(false);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -30,13 +31,14 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
           onPress={() => navigation.navigate("UserEditScreen")}
           style={styles.userContainer}
         >
-          {user?.picture ? (
+          {user?.picture && !imageError ? (
             <Image
               source={{
                 uri: `https://fortuna-api.onrender.com/api/files/${user.picture}`,
               }}
               alt="User Photo"
               style={styles.userPhoto}
+              onError={() => setImageError(true)}
             />
           ) : (
             <VStack style={styles.initialsContainer}>
@@ -56,6 +58,10 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
             <Icon as={MaterialIcons} name="refresh" color="white" size={7} />
           </TouchableOpacity>
         )}
+
+        <TouchableOpacity onPress={logout} style={styles.refreshButton}>
+          <MaterialIcons name="logout" size={50} color="#9a67ea" />
+        </TouchableOpacity>
       </HStack>
     </SafeAreaView>
   );

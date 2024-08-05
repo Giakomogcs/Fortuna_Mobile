@@ -7,16 +7,11 @@ import AppRoutes from "./app.routes";
 import { Loading } from "@components/Loading";
 
 const Routes = () => {
-  const { token, isLoadingUserStorageData } = useContext(TokenContext);
+  const { token, user, isLoadingUserStorageData } = useContext(TokenContext);
   const { colors } = useTheme();
 
-  const theme = {
-    ...DefaultTheme,
-    colors: {
-      ...DefaultTheme.colors,
-      background: colors.gray[700],
-    },
-  };
+  const theme = DefaultTheme;
+  theme.colors.background = colors.gray[700];
 
   if (isLoadingUserStorageData) {
     return <Loading />;

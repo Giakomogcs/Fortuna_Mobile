@@ -6,7 +6,6 @@ import Header from "../components/Header";
 
 const HomeScreen = ({ navigation }) => {
   const { logout, user } = useContext(TokenContext);
-  console.log(user);
 
   useEffect(() => {
     if (!user || !user.knowledge || user.knowledge.length === 0) {
