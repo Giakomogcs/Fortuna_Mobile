@@ -1,22 +1,72 @@
 import React, { useEffect, useState, useContext } from "react";
 import {
   View,
-  Text,
-  StyleSheet,
   ScrollView,
   Alert,
-  ActivityIndicator,
   TouchableOpacity,
+  ActivityIndicator,
+  StyleSheet,
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
-import Header from "../components/Header";
-import { List, Divider } from "react-native-paper";
+import Header from "../components/HeaderApp";
+import { Text, Divider, useTheme, Box } from "native-base";
+import { MaterialIcons } from "@expo/vector-icons";
+import { List } from "react-native-paper";
+import { background } from "native-base/lib/typescript/theme/styled-system";
 
-const GoalDetailScreen = ({ route, navigation }) => {
+export interface Step {
+  step: number;
+  description: string;
+  actions: string[];
+  timeline: string;
+}
+
+export interface Planning {
+  objective?: string;
+  steps?: Step[];
+  resources?: string[];
+  savings_tips?: string[];
+  contingency_plan?: string[];
+  additional_income_sources?: string[];
+  monitoring_adjustments?: string[];
+  current_situation?: {
+    expenses?: string;
+    income: string;
+    savings?: string;
+  };
+}
+
+export interface Goal {
+  id: string;
+  name: string;
+  patrimony: string;
+  my_patrimony: string;
+  monthly_aport: string;
+  dividends: string;
+  rate: string;
+  status: boolean;
+  planning?: Planning;
+  summary?: string;
+}
+
+type GoalDetailScreenProps = {
+  route: {
+    params: {
+      goalId: string;
+    };
+  };
+  navigation: any;
+};
+
+const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
+  route,
+  navigation,
+}) => {
   const { goalId } = route.params;
   const { token } = useContext(TokenContext);
-  const [goalData, setGoalData] = useState(null);
+  const [goalData, setGoalData] = useState<Goal | null>(null);
   const [loading, setLoading] = useState(true);
+  const theme = useTheme();
 
   const fetchGoalData = async () => {
     try {
@@ -56,7 +106,7 @@ const GoalDetailScreen = ({ route, navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9a67ea" />
+        <ActivityIndicator size="large" color={theme.colors.green[500]} />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -72,28 +122,62 @@ const GoalDetailScreen = ({ route, navigation }) => {
     );
   }
 
-  const { planning } = goalData;
+  const { planning, summary } = goalData;
+
+  const renderListItems = (items: string[]) => {
+    return items.map((item, index) => (
+      <Text key={index} style={styles.listItem}>
+        * {item}
+      </Text>
+    ));
+  };
 
   return (
     <View style={styles.container}>
       <Header title="Detalhes da Meta" onRefresh={fetchGoalData} />
       <ScrollView>
-        <Text style={styles.subtitle}>Meta</Text>
-        <Text style={styles.text}>Nome: {goalData.name}</Text>
-        <Text style={styles.text}>Patrimônio: {goalData.patrimony}</Text>
-        <Text style={styles.text}>Meu Patrimônio: {goalData.my_patrimony}</Text>
-        <Text style={styles.text}>Aporte Mensal: {goalData.monthly_aport}</Text>
-        <Text style={styles.text}>Dividendos: {goalData.dividends}</Text>
-        <Text style={styles.text}>Rendimento: {goalData.rate}</Text>
-        <Text style={styles.text}>
-          Status: {goalData.status ? "Concluída" : "Em Andamento"}
-        </Text>
+        <View style={styles.metaContainer}>
+          <Text style={styles.metaTitle}>{goalData.name}</Text>
+
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Patrimônio:</Text>
+            <Text style={styles.metaValue}>{goalData.patrimony}</Text>
+          </View>
+
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Meu Patrimônio:</Text>
+            <Text style={styles.metaValue}>{goalData.my_patrimony}</Text>
+          </View>
+
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Aporte Mensal:</Text>
+            <Text style={styles.metaValue}>{goalData.monthly_aport}</Text>
+          </View>
+
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Dividendos:</Text>
+            <Text style={styles.metaValue}>{goalData.dividends}</Text>
+          </View>
+
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Rendimento:</Text>
+            <Text style={styles.metaValue}>{goalData.rate}</Text>
+          </View>
+
+          <View style={styles.metaItem}>
+            <Text style={styles.metaLabel}>Status:</Text>
+            <Text style={styles.metaValue}>
+              {goalData.status ? "Concluída" : "Em Andamento"}
+            </Text>
+          </View>
+        </View>
 
         <Divider style={styles.divider} />
 
         {planning?.objective && (
           <>
             <List.Accordion
+              style={styles.AccordionColor}
               title="Objetivo"
               left={(props) => <List.Icon {...props} icon="target" />}
             >
@@ -103,9 +187,25 @@ const GoalDetailScreen = ({ route, navigation }) => {
           </>
         )}
 
+        {summary && (
+          <>
+            <List.Accordion
+              style={styles.AccordionColor}
+              title="Resumo"
+              left={(props) => (
+                <List.Icon {...props} icon="file-document-outline" />
+              )}
+            >
+              <Text style={styles.text}>{summary}</Text>
+            </List.Accordion>
+            <Divider style={styles.divider} />
+          </>
+        )}
+
         {planning?.steps && planning.steps.length > 0 && (
           <>
             <List.Accordion
+              style={styles.AccordionColor}
               title="Passos"
               left={(props) => (
                 <List.Icon {...props} icon="format-list-numbered" />
@@ -116,17 +216,9 @@ const GoalDetailScreen = ({ route, navigation }) => {
                   <Text style={styles.stepTitle}>
                     Passo {step.step}: {step.description}
                   </Text>
-                  <Text style={styles.stepDetail}>
-                    Contexto: {step.context}
-                  </Text>
-                  <Text style={styles.stepDetail}>Prazo: {step.deadline}</Text>
-                  <Text style={styles.stepDetail}>
-                    Responsável: {step.responsible}
-                  </Text>
-                  <Text style={styles.stepDetail}>
-                    Indicador de Sucesso: {step.success_indicator}
-                  </Text>
-                  <Divider style={styles.divider} />
+                  <Text style={styles.stepDetail}>Prazo: {step.timeline}</Text>
+                  <Text style={styles.stepDetail}>Ações:</Text>
+                  {renderListItems(step.actions)}
                 </View>
               ))}
             </List.Accordion>
@@ -137,12 +229,11 @@ const GoalDetailScreen = ({ route, navigation }) => {
         {planning?.resources && planning.resources.length > 0 && (
           <>
             <List.Accordion
+              style={styles.AccordionColor}
               title="Recursos"
               left={(props) => <List.Icon {...props} icon="book" />}
             >
-              {planning.resources.map((item, index) => (
-                <List.Item key={index} title={item} />
-              ))}
+              {renderListItems(planning.resources)}
             </List.Accordion>
             <Divider style={styles.divider} />
           </>
@@ -151,12 +242,11 @@ const GoalDetailScreen = ({ route, navigation }) => {
         {planning?.savings_tips && planning.savings_tips.length > 0 && (
           <>
             <List.Accordion
+              style={styles.AccordionColor}
               title="Dicas de Poupança"
               left={(props) => <List.Icon {...props} icon="lightbulb" />}
             >
-              {planning.savings_tips.map((tip, index) => (
-                <List.Item key={index} title={tip} />
-              ))}
+              {renderListItems(planning.savings_tips)}
             </List.Accordion>
             <Divider style={styles.divider} />
           </>
@@ -165,12 +255,11 @@ const GoalDetailScreen = ({ route, navigation }) => {
         {planning?.contingency_plan && planning.contingency_plan.length > 0 && (
           <>
             <List.Accordion
+              style={styles.AccordionColor}
               title="Plano de Contingência"
               left={(props) => <List.Icon {...props} icon="alert" />}
             >
-              {planning.contingency_plan.map((plan, index) => (
-                <List.Item key={index} title={plan} />
-              ))}
+              {renderListItems(planning.contingency_plan)}
             </List.Accordion>
             <Divider style={styles.divider} />
           </>
@@ -180,12 +269,11 @@ const GoalDetailScreen = ({ route, navigation }) => {
           planning.additional_income_sources.length > 0 && (
             <>
               <List.Accordion
+                style={styles.AccordionColor}
                 title="Fontes de Renda Adicional"
                 left={(props) => <List.Icon {...props} icon="cash-multiple" />}
               >
-                {planning.additional_income_sources.map((source, index) => (
-                  <List.Item key={index} title={source} />
-                ))}
+                {renderListItems(planning.additional_income_sources)}
               </List.Accordion>
               <Divider style={styles.divider} />
             </>
@@ -195,12 +283,11 @@ const GoalDetailScreen = ({ route, navigation }) => {
           planning.monitoring_adjustments.length > 0 && (
             <>
               <List.Accordion
+                style={styles.AccordionColor}
                 title="Ajustes de Monitoramento"
                 left={(props) => <List.Icon {...props} icon="adjust" />}
               >
-                {planning.monitoring_adjustments.map((adjustment, index) => (
-                  <List.Item key={index} title={adjustment} />
-                ))}
+                {renderListItems(planning.monitoring_adjustments)}
               </List.Accordion>
             </>
           )}
@@ -208,6 +295,7 @@ const GoalDetailScreen = ({ route, navigation }) => {
         {planning?.current_situation && (
           <>
             <List.Accordion
+              style={styles.AccordionColor}
               title="Situação Atual"
               left={(props) => <List.Icon {...props} icon="information" />}
             >
@@ -247,12 +335,17 @@ const GoalDetailScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#e5e5e5fc",
+    marginTop: 4,
+  },
+  AccordionColor: {
+    backgroundColor: "#e5e5e5fc",
   },
   subtitle: {
     fontSize: 20,
-    color: "#2c3e50",
+    color: "#442c50",
     marginBottom: 10,
+    marginTop: 16,
     paddingHorizontal: 20,
     fontWeight: "bold",
   },
@@ -261,11 +354,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     paddingHorizontal: 20,
   },
-  bold: {
-    fontWeight: "bold",
-  },
   stepContainer: {
-    backgroundColor: "#ecf0f1",
+    backgroundColor: "#f0edf2",
     padding: 15,
     borderRadius: 5,
     marginBottom: 10,
@@ -274,9 +364,15 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontWeight: "bold",
     fontSize: 16,
+    marginBottom: 5,
   },
   stepDetail: {
     fontSize: 14,
+    marginBottom: 5,
+  },
+  listItem: {
+    fontSize: 14,
+    marginLeft: 20,
     marginBottom: 5,
   },
   buttonContainer: {
@@ -284,14 +380,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   goalsButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#9a67ea",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
     width: "80%",
+    color: "#f1f1f1",
   },
   buttonText: {
-    color: "#fff",
+    color: "#dedddd",
     fontSize: 16,
   },
   divider: {
@@ -315,6 +412,38 @@ const styles = StyleSheet.create({
   errorText: {
     fontSize: 16,
     color: "#e74c3c",
+  },
+
+  metaContainer: {
+    justifyContent: "center",
+
+    backgroundColor: "#d4d4d4",
+    padding: 15,
+    borderRadius: 16,
+    marginBottom: 20,
+
+    margin: 8,
+  },
+  metaTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#442c50",
+    marginVertical: 12,
+  },
+  metaItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  metaLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6c757d",
+  },
+  metaValue: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#343a40",
   },
 });
 

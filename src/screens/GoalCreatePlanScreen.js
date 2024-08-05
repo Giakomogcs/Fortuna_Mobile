@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
-import Header from "../components/Header";
+import Header from "../components/HeaderHome";
 import Icon from "react-native-vector-icons/Ionicons";
 
 const GoalCreatePlanScreen = ({ route, navigation }) => {

@@ -2,11 +2,18 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useTheme } from "native-base";
 import { Ionicons } from "@expo/vector-icons";
+import { Platform } from "react-native";
 
 import HomeScreen from "@screens/HomeScreen";
 import ListMeta from "@screens/ListMeta";
 import UserEditScreen from "@screens/UserEditScreen";
-import AppStack from "./AppStack";
+import GoalDetailScreen from "@screens/GoalDetailScreen";
+import GoalCreateScreen from "@screens/GoalCreateScreen";
+import GoalDefineScreen from "@screens/GoalDefineScreen";
+import QuestionsGoalScreen from "@screens/QuestionsGoalScreen";
+
+import GoalCreatePlanScreen from "@screens/GoalCreatePlanScreen";
+import FinancialGoalsScreen from "@screens/FinancialGoalsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -21,6 +28,13 @@ const AppTabs = () => {
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.purple[500],
         tabBarInactiveTintColor: colors.gray[200],
+        tabBarStyle: {
+          backgroundColor: colors.gray[700],
+          borderTopWidth: 0,
+          height: Platform.OS === "android" ? "auto" : 96,
+          paddingBottom: sizes[10],
+          paddingTop: sizes[6],
+        },
         tabBarIcon: ({ color, size }) => {
           let iconName: keyof typeof Ionicons.glyphMap;
 
@@ -41,9 +55,45 @@ const AppTabs = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Metas" component={ListMeta} />
       <Tab.Screen name="Profile" component={UserEditScreen} />
+
       <Tab.Screen
-        name="AppStack"
-        component={AppStack}
+        name="QuestionsGoal"
+        component={QuestionsGoalScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="GoalCreate"
+        component={GoalCreateScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="GoalDefine"
+        component={GoalDefineScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="ListMeta"
+        component={ListMeta}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="GoalCreatePlan"
+        component={GoalCreatePlanScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="FinancialGoals"
+        component={FinancialGoalsScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="UserEdit"
+        component={UserEditScreen}
+        options={{ tabBarButton: () => null }}
+      />
+      <Tab.Screen
+        name="GoalDetail"
+        component={GoalDetailScreen}
         options={{ tabBarButton: () => null }}
       />
     </Tab.Navigator>

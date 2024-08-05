@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
     <SafeAreaView style={styles.safeArea}>
       <HStack style={styles.header}>
         <TouchableOpacity
-          onPress={() => navigation.navigate("UserEditScreen")}
+          onPress={() => navigation.navigate("UserEdit")}
           style={styles.userContainer}
         >
           {user?.picture && !imageError ? (

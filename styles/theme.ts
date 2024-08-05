@@ -1,21 +1,38 @@
-const theme = {
-  COLORS: {
-    BACKGROUND_DEFAULT: "#E3E3E3",
-    BACKGROUND_FOOTER: "#4E009C",
-    BACKGROUND_BUTTON: "#4E009C",
-    COLOR_DEFAULT: "#4E009C",
-    COLOR_FOOTER: "#4A4A4A",
-    GRADIENT: "linear-gradient(to bottom, #3A0273, #592D60)",
-    INPUT_BORDER: "#4E009C",
-    BUTTON_BORDER: "#4E009C",
-    INPUT_TITLE: "#4E009C",
-    INPUT_TEXT: "#5A5A5A",
-    WHITE: "#F4EDE8",
-    ORANGE: "#FF9000",
-    GRAY_100: "#999591",
-    GRAY_300: "#666360",
-    RED: "#FF002E",
-  },
-};
+import { extendTheme } from "native-base";
 
-export default theme;
+export const THEME = extendTheme({
+  colors: {
+    purple: {
+      700: "#00875F",
+      500: "#00B37E",
+    },
+    gray: {
+      700: "#121214",
+      600: "#202024",
+      500: "#29292E",
+      400: "#323238",
+      300: "#7C7C8A",
+      200: "#C4C4CC",
+      100: "#E1E1E6",
+    },
+    white: "#FFFFFF",
+    red: {
+      500: "#F75A68",
+    },
+  },
+  fonts: {
+    heading: "Roboto_700Bold",
+    body: "Roboto_400Regular",
+  },
+  fontSizes: {
+    xs: 12,
+    sm: 14,
+    md: 16,
+    lg: 18,
+    xl: 20,
+  },
+  sizes: {
+    14: 56,
+    33: 148,
+  },
+});

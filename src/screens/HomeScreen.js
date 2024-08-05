@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TokenContext } from "../hooks/TokenContext";
-import Header from "../components/Header";
+import Header from "../components/HeaderHome";
 
 const HomeScreen = ({ navigation }) => {
   const { logout, user } = useContext(TokenContext);
