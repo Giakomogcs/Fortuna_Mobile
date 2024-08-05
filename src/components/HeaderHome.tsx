@@ -69,7 +69,10 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#9a67ea",
+    borderRadius: 16,
+    margin: 8,
+    padding: 8,
   },
   header: {
     flexDirection: "row",
@@ -77,7 +80,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 8,
     paddingVertical: 16,
-    backgroundColor: "#4CAF50",
+    backgroundColor: "#9a67ea",
+    borderRadius: 16,
   },
   userContainer: {
     marginRight: 8,
@@ -96,7 +100,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   initialsText: {
-    color: "#4CAF50",
+    color: "#9a67ea",
     fontWeight: "bold",
     fontSize: 18,
   },

@@ -4,7 +4,7 @@ export const THEME = extendTheme({
   colors: {
     purple: {
       700: "#431361",
-      500: "#7400b3",
+      500: "#9a67ea",
     },
     gray: {
       700: "#121214",

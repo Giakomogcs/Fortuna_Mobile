@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Alert, Image } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderHome";
@@ -25,7 +25,7 @@ const HomeScreen = ({ navigation }) => {
         {
           text: "Sim",
           onPress: () => {
-            logout(); // Remover o token
+            logout();
           },
         },
       ],
@@ -40,28 +40,11 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Header title="Fortuna" />
-      <View style={styles.welcomeContainer}>
-        <Text style={styles.welcomeText}>{user.name},</Text>
-        <Text style={styles.welcomeBackText}>Seja bem vindo</Text>
+      <View style={styles.textContainer}>
+        <Text style={styles.text}>Venha, vamos fazer uma fortuna juntos</Text>
       </View>
-      <View style={styles.iconContainer}>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Criando Meta")}
-          style={styles.iconBox}
-        >
-          <MaterialIcons name="attach-money" size={50} color="#9a67ea" />
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          onPress={() => navigation.navigate("Metas")}
-          style={styles.iconBox}
-        >
-          <MaterialIcons name="list" size={50} color="#9a67ea" />
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={handleLogout} style={styles.iconBox}>
-          <MaterialIcons name="logout" size={50} color="#9a67ea" />
-        </TouchableOpacity>
+      <View style={styles.imageContainer}>
+        <Image source={require('../../assets/Planet.png')} style={styles.image} />
       </View>
     </View>
   );
@@ -71,14 +54,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-  },
-  welcomeContainer: {
-    width: "100%",
-    padding: 20,
-    backgroundColor: "#9a67ea",
-    borderBottomLeftRadius: 25,
-    borderBottomRightRadius: 25,
-    alignItems: "center",
   },
   welcomeText: {
     fontSize: 18,
@@ -90,7 +65,6 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   iconContainer: {
-    flex: 1,
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "center",
@@ -105,6 +79,28 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "#9a67ea",
     borderRadius: 10,
+  },
+  textContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginVertical: 20,
+  },
+  text: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#9a67ea",
+    textAlign: "center",
+  },
+  imageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 50,
+  },
+  image: {
+    width: 300,
+    height: 300,
+    resizeMode: "contain",
   },
 });
 

@@ -18,7 +18,7 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
 
   return (
     <SafeAreaView
-      style={{ backgroundColor: theme.colors.purple[700], width: "100%" }}
+      style={{ backgroundColor: theme.colors.purple[500], width: "100%" }}
     >
       <HStack
         alignItems="center"
