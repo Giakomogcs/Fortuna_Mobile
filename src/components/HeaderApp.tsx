@@ -1,6 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { HStack, VStack, Text, Icon, useTheme } from "native-base";
+import { HStack, Text, Icon, useTheme } from "native-base";
 import { TouchableOpacity } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TokenContext } from "../hooks/TokenContext";
@@ -13,23 +13,36 @@ type HeaderProps = {
 
 const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
   const navigation = useNavigation<NavigationProp<any>>();
-  const { user, logout } = useContext(TokenContext);
+  const { token } = useContext(TokenContext);
   const theme = useTheme();
-  const [imageError, setImageError] = useState(false);
 
   return (
-    <SafeAreaView style={{ backgroundColor: theme.colors.purple[700] }}>
+    <SafeAreaView
+      style={{ backgroundColor: theme.colors.purple[700], width: "100%" }}
+    >
       <HStack
         alignItems="center"
         justifyContent="space-between"
-        height={8}
+        height={12}
         px={4}
       >
-        <VStack flex={1}>
-          <Text color={theme.colors.white} fontSize="xl" fontWeight="bold">
-            {title}
-          </Text>
-        </VStack>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Icon
+            as={MaterialIcons}
+            name="arrow-back"
+            color={theme.colors.white}
+            size={7}
+          />
+        </TouchableOpacity>
+        <Text
+          color={theme.colors.white}
+          fontSize="xl"
+          fontWeight="bold"
+          flex={1}
+          textAlign="center"
+        >
+          {title}
+        </Text>
         {onRefresh && (
           <TouchableOpacity onPress={onRefresh}>
             <Icon

@@ -4,15 +4,14 @@ import {
   ScrollView,
   Alert,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderApp";
-import { Text, Divider, useTheme, Box } from "native-base";
+import { Text, Divider, useTheme } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { List } from "react-native-paper";
-import { background } from "native-base/lib/typescript/theme/styled-system";
+import { Loading } from "../components/Loading";
 
 export interface Step {
   step: number;
@@ -99,17 +98,42 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
     }
   };
 
+  const deleteGoal = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `https://fortuna-api.onrender.com/api/goals/${goalId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Error response data:", errorData);
+        throw new Error("Failed to delete goal");
+      }
+
+      navigation.navigate("Metas");
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao deletar a meta.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchGoalData();
   }, [goalId, token]);
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.colors.green[500]} />
-        <Text style={styles.loadingText}>Carregando...</Text>
-      </View>
-    );
+    return <Loading title="Carregando detalhes da meta..." />;
   }
 
   if (!goalData) {
@@ -320,6 +344,9 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
         )}
 
         <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.deleteButton} onPress={deleteGoal}>
+            <MaterialIcons name="delete" size={24} color="#fff" />
+          </TouchableOpacity>
           <TouchableOpacity
             style={styles.goalsButton}
             onPress={() => navigation.navigate("Metas")}
@@ -376,6 +403,8 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     padding: 20,
     alignItems: "center",
   },
@@ -384,11 +413,17 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
-    width: "80%",
-    color: "#f1f1f1",
+    width: "70%",
+  },
+  deleteButton: {
+    backgroundColor: "#e74c3c",
+    padding: 15,
+    borderRadius: 10,
+    alignItems: "center",
+    width: "20%",
   },
   buttonText: {
-    color: "#dedddd",
+    color: "#fff",
     fontSize: 16,
   },
   divider: {
@@ -413,15 +448,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#e74c3c",
   },
-
   metaContainer: {
     justifyContent: "center",
-
     backgroundColor: "#d4d4d4",
     padding: 15,
     borderRadius: 16,
     marginBottom: 20,
-
     margin: 8,
   },
   metaTitle: {
