@@ -60,7 +60,7 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
         )}
 
         <TouchableOpacity onPress={logout} style={styles.refreshButton}>
-          <MaterialIcons name="logout" size={50} color="#9a67ea" />
+          <MaterialIcons name="logout" size={50} color="#fff" />
         </TouchableOpacity>
       </HStack>
     </SafeAreaView>

@@ -21,7 +21,7 @@ const QuestionsGoalScreen = ({ route, navigation }) => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       goalData.answers = updatedAnswers;
-      navigation.navigate("Definição da meta", { ...goalData });
+      navigation.navigate("GoalDefine", { ...goalData });
     }
   };
 

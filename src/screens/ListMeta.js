@@ -67,7 +67,7 @@ const ListMeta = ({ navigation }) => {
   );
 
   const handleCreateGoal = () => {
-    navigation.navigate("CreateGoal");
+    navigation.navigate("GoalCreate");
   };
 
   return (

@@ -70,7 +70,7 @@ const GoalCreateScreen = ({ navigation }) => {
 
           if (responseAnalyze.ok) {
             const resultAnalyze = await responseAnalyze.json();
-            navigation.navigate("Questôes", { goalData: resultAnalyze });
+            navigation.navigate("QuestionsGoal", { goalData: resultAnalyze });
           } else {
             setResponseMessage("Failed to analyze goal data.");
           }
