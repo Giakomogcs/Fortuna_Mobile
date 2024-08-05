@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HStack, VStack, Text, Icon, Image } from "native-base";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TokenContext } from "../hooks/TokenContext";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -58,9 +58,8 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
             <Icon as={MaterialIcons} name="refresh" color="white" size={7} />
           </TouchableOpacity>
         )}
-
-        <TouchableOpacity onPress={logout} style={styles.refreshButton}>
-          <MaterialIcons name="logout" size={50} color="#fff" />
+        <TouchableOpacity onPress={logout} style={styles.logoutButton}>
+          <MaterialIcons name="logout" size={24} color="#fff" />
         </TouchableOpacity>
       </HStack>
     </SafeAreaView>
@@ -70,9 +69,9 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
 const styles = StyleSheet.create({
   safeArea: {
     backgroundColor: "#9a67ea",
-    borderRadius: 16,
-    margin: 8,
-    padding: 8,
+    width: Dimensions.get("window").width,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
   header: {
     flexDirection: "row",
@@ -81,7 +80,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 16,
     backgroundColor: "#9a67ea",
-    borderRadius: 16,
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
   },
   userContainer: {
     marginRight: 8,
@@ -109,6 +109,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   refreshButton: {
+    padding: 10,
+  },
+  logoutButton: {
     padding: 10,
   },
 });

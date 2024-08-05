@@ -8,8 +8,11 @@ import {
   Button,
   ScrollView,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
+import Header from "../components/HeaderApp";
+import { useTheme } from 'native-base';
 
 const GoalCreateScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -20,9 +23,11 @@ const GoalCreateScreen = ({ navigation }) => {
   const [monthlyAport, setMonthlyAport] = useState(0);
   const [rate, setRate] = useState(0.01);
   const [dividends, setDividends] = useState(0);
+  const [timeOrAport, setTimeOrAport] = useState(false); // Novo switch
   const [responseMessage, setResponseMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { token } = useContext(TokenContext);
+  const theme = useTheme();
 
   const handleSubmit = async () => {
     const goalData = {
@@ -31,8 +36,8 @@ const GoalCreateScreen = ({ navigation }) => {
       dividends: typeGoal ? dividends : 0,
       type_goal: typeGoal,
       initial_patrimony: initialPatrimony,
-      time_desired: timeDesired,
-      monthly_aport: monthlyAport,
+      time_desired: timeOrAport ? timeDesired : 0,
+      monthly_aport: timeOrAport ? 0 : monthlyAport,
       rate: rate,
     };
 
@@ -72,16 +77,16 @@ const GoalCreateScreen = ({ navigation }) => {
             const resultAnalyze = await responseAnalyze.json();
             navigation.navigate("QuestionsGoal", { goalData: resultAnalyze });
           } else {
-            setResponseMessage("Failed to analyze goal data.");
+            setResponseMessage("Falha ao analisar os dados da meta.");
           }
         } catch (error) {
           console.log(error);
         }
       } else {
-        setResponseMessage("Failed to submit goal data.");
+        setResponseMessage("Falha ao enviar os dados da meta.");
       }
     } catch (error) {
-      setResponseMessage("An error occurred while submitting goal data.");
+      setResponseMessage("Ocorreu um erro ao enviar os dados da meta.");
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -89,92 +94,116 @@ const GoalCreateScreen = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#9a67ea" />
-          <Text style={styles.loadingText}>Analisando Meta...</Text>
-        </View>
-      ) : (
-        <>
-          <Text style={styles.label}>Name:</Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} />
-
-          <View style={styles.switchContainer}>
-            <Text style={styles.label}>Type Goal:</Text>
-            <Switch value={typeGoal} onValueChange={setTypeGoal} />
+    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+      <Header title="Criar Meta" />
+      <ScrollView contentContainerStyle={styles.container}>
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#9a67ea" />
+            <Text style={styles.loadingText}>Analisando Meta...</Text>
           </View>
+        ) : (
+          <>
+            <Text style={styles.label}>Nome:</Text>
+            <TextInput style={styles.input} value={name} onChangeText={setName} />
 
-          {!typeGoal && (
-            <>
-              <Text style={styles.label}>Patrimony:</Text>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                value={String(patrimony)}
-                onChangeText={(text) => setPatrimony(Number(text))}
+            <View style={styles.switchContainer}>
+              <Text style={styles.label}>Tipo de Meta:</Text>
+              <Switch
+                value={typeGoal}
+                onValueChange={setTypeGoal}
+                trackColor={{ false: "#767577", true: theme.colors.purple[500] }}
+                thumbColor={typeGoal ? "#fff" : theme.colors.purple[500]}
               />
-
-              <Text style={styles.label}>Initial Patrimony:</Text>
-            </>
-          )}
-
-          {typeGoal && (
-            <>
-              <Text style={styles.label}>Dividends:</Text>
-              <TextInput
-                style={styles.input}
-                keyboardType="numeric"
-                value={String(dividends)}
-                onChangeText={(text) => setDividends(Number(text))}
-              />
-
-              <Text style={styles.label}>Initial Patrimony:</Text>
-            </>
-          )}
-
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={String(initialPatrimony)}
-            onChangeText={(text) => setInitialPatrimony(Number(text))}
-          />
-
-          <Text style={styles.label}>Time Desired (years):</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={String(timeDesired)}
-            onChangeText={(text) => setTimeDesired(Number(text))}
-          />
-
-          <Text style={styles.label}>Monthly Aport:</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={String(monthlyAport)}
-            onChangeText={(text) => setMonthlyAport(Number(text))}
-          />
-
-          <Text style={styles.label}>Rate:</Text>
-          <TextInput
-            style={styles.input}
-            keyboardType="numeric"
-            value={String(rate)}
-            onChangeText={(text) => setRate(Number(text))}
-          />
-
-          <Button title="Submit" onPress={handleSubmit} />
-
-          {responseMessage ? (
-            <View style={styles.responseContainer}>
-              <Text style={styles.responseLabel}>Response:</Text>
-              <Text style={styles.responseText}>{responseMessage}</Text>
             </View>
-          ) : null}
-        </>
-      )}
-    </ScrollView>
+
+            {!typeGoal && (
+              <>
+                <Text style={styles.label}>Patrimônio:</Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={String(patrimony)}
+                  onChangeText={(text) => setPatrimony(Number(text))}
+                />
+
+                <Text style={styles.label}>Patrimônio Inicial:</Text>
+              </>
+            )}
+
+            {typeGoal && (
+              <>
+                <Text style={styles.label}>Dividendos:</Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={String(dividends)}
+                  onChangeText={(text) => setDividends(Number(text))}
+                />
+
+                <Text style={styles.label}>Patrimônio Inicial:</Text>
+              </>
+            )}
+
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={String(initialPatrimony)}
+              onChangeText={(text) => setInitialPatrimony(Number(text))}
+            />
+
+            <View style={styles.switchContainer}>
+              <Text style={styles.label}>Tempo ou Aporte:</Text>
+              <Switch
+                value={timeOrAport}
+                onValueChange={setTimeOrAport}
+                trackColor={{ false: "#767577", true: theme.colors.purple[500] }}
+                thumbColor={timeOrAport ? "#fff" : theme.colors.purple[500]}
+              />
+            </View>
+
+            {timeOrAport ? (
+              <>
+                <Text style={styles.label}>Tempo Desejado (anos):</Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={String(timeDesired)}
+                  onChangeText={(text) => setTimeDesired(Number(text))}
+                />
+              </>
+            ) : (
+              <>
+                <Text style={styles.label}>Aporte Mensal:</Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={String(monthlyAport)}
+                  onChangeText={(text) => setMonthlyAport(Number(text))}
+                />
+              </>
+            )}
+
+            <Text style={styles.label}>Taxa:</Text>
+            <TextInput
+              style={styles.input}
+              keyboardType="numeric"
+              value={String(rate)}
+              onChangeText={(text) => setRate(Number(text))}
+            />
+
+            <Button title="Enviar" onPress={handleSubmit} color="#9a67ea" />
+
+            {responseMessage ? (
+              <View style={styles.responseContainer}>
+                <Text style={styles.responseLabel}>Resposta:</Text>
+                <Text style={styles.responseText}>{responseMessage}</Text>
+              </View>
+            ) : null}
+          </>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -182,6 +211,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 16,
+    backgroundColor: "#fff",
   },
   label: {
     marginVertical: 8,
@@ -189,10 +219,11 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
+    borderColor: "#9a67ea",
+    borderWidth: 2,
     marginBottom: 12,
     paddingHorizontal: 8,
+    borderRadius: 8,
   },
   switchContainer: {
     flexDirection: "row",
