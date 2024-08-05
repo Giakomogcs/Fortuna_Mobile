@@ -11,6 +11,7 @@ import GoalDetailScreen from "@screens/GoalDetailScreen";
 import GoalCreateScreen from "@screens/GoalCreateScreen";
 import GoalDefineScreen from "@screens/GoalDefineScreen";
 import QuestionsGoalScreen from "@screens/QuestionsGoalScreen";
+import TransactionScreen from "@screens/TransactionScreen";
 
 import GoalCreatePlanScreen from "@screens/GoalCreatePlanScreen";
 import FinancialGoalsScreen from "@screens/FinancialGoalsScreen";
@@ -87,13 +88,19 @@ const AppTabs = () => {
         options={{ tabBarButton: () => null }}
       />
       <Tab.Screen
-        name="UserEdit"
-        component={UserEditScreen}
+        name="GoalDetail"
+        component={GoalDetailScreen}
+        options={{ tabBarButton: () => null }}
+      />
+
+      <Tab.Screen
+        name="TransactionScreen"
+        component={TransactionScreen}
         options={{ tabBarButton: () => null }}
       />
       <Tab.Screen
-        name="GoalDetail"
-        component={GoalDetailScreen}
+        name="UserEdit"
+        component={UserEditScreen}
         options={{ tabBarButton: () => null }}
       />
     </Tab.Navigator>

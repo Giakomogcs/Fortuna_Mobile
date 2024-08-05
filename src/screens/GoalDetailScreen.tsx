@@ -40,10 +40,11 @@ export interface Goal {
   name: string;
   patrimony: string;
   my_patrimony: string;
-  monthly_aport: string;
+  monthly_aport: number;
   dividends: string;
   rate: string;
   status: boolean;
+  time_desired: number;
   planning?: Planning;
   summary?: string;
 }
@@ -52,6 +53,7 @@ type GoalDetailScreenProps = {
   route: {
     params: {
       goalId: string;
+      updatedGoalData?: Goal;
     };
   };
   navigation: any;
@@ -61,10 +63,12 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
   route,
   navigation,
 }) => {
-  const { goalId } = route.params;
+  const { goalId, updatedGoalData } = route.params;
   const { token } = useContext(TokenContext);
-  const [goalData, setGoalData] = useState<Goal | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [goalData, setGoalData] = useState<Goal | null>(
+    updatedGoalData || null
+  );
+  const [loading, setLoading] = useState(!updatedGoalData);
   const theme = useTheme();
 
   const fetchGoalData = async () => {
@@ -129,8 +133,10 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
   };
 
   useEffect(() => {
-    fetchGoalData();
-  }, [goalId, token]);
+    if (!updatedGoalData) {
+      fetchGoalData();
+    }
+  }, [goalId, token, updatedGoalData]);
 
   if (loading) {
     return <Loading title="Carregando detalhes da meta..." />;
@@ -147,6 +153,7 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
   }
 
   const { planning, summary } = goalData;
+  const timeRemaining = Number(goalData.time_desired).toFixed(1);
 
   const renderListItems = (items: string[]) => {
     return items.map((item, index) => (
@@ -175,7 +182,9 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
 
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Aporte Mensal:</Text>
-            <Text style={styles.metaValue}>{goalData.monthly_aport}</Text>
+            <Text style={styles.metaValue}>
+              {goalData.monthly_aport.toFixed(2)}
+            </Text>
           </View>
 
           <View style={styles.metaItem}>
@@ -197,6 +206,27 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
         </View>
 
         <Divider style={styles.divider} />
+
+        <View style={styles.highlightContainer}>
+          <Text style={styles.highlightText}>
+            Aporte Necessário: R$ {goalData.monthly_aport.toFixed(2)}
+          </Text>
+          <Text style={styles.highlightText}>
+            Tempo Estimado: {timeRemaining} anos
+          </Text>
+        </View>
+
+        <View style={styles.transactionButtonContainer}>
+          <TouchableOpacity
+            style={styles.transactionButton}
+            onPress={() =>
+              navigation.navigate("TransactionScreen", { goalId: goalData.id })
+            }
+          >
+            <MaterialIcons name="attach-money" size={24} color="#fff" />
+            <Text style={styles.buttonText}>Realizar Depósito</Text>
+          </TouchableOpacity>
+        </View>
 
         {planning?.objective && (
           <>
@@ -476,6 +506,35 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     color: "#343a40",
+  },
+  highlightContainer: {
+    backgroundColor: "#ffeeba",
+    padding: 10,
+    borderRadius: 8,
+    margin: 10,
+    alignItems: "center",
+  },
+  highlightText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#856404",
+  },
+  transactionButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    padding: 20,
+  },
+  transactionButton: {
+    backgroundColor: "#9a67ea",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 10,
+  },
+  transactionButtonText: {
+    marginLeft: 10,
+    color: "#fff",
+    fontSize: 16,
   },
 });
 
