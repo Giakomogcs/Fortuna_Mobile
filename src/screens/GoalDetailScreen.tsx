@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   View,
   ScrollView,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderApp";
 import { Text, Divider, useTheme } from "native-base";
@@ -23,7 +24,7 @@ export interface Step {
 export interface Planning {
   objective?: string;
   steps?: Step[];
-  resources?: string[];
+  resources?: { description: string; resource: string }[];
   savings_tips?: string[];
   contingency_plan?: string[];
   additional_income_sources?: string[];
@@ -132,11 +133,75 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (!updatedGoalData) {
+  const finalizeGoal = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `https://fortuna-api.onrender.com/api/goals/finalize/${goalId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Error response data:", errorData);
+        throw new Error("Failed to finalize goal");
+      }
+
       fetchGoalData();
+      Alert.alert("Sucesso", "Meta finalizada com sucesso.");
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao finalizar a meta.");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  }, [goalId, token, updatedGoalData]);
+  };
+
+  const reopenGoal = async () => {
+    try {
+      setLoading(true);
+
+      const response = await fetch(
+        `https://fortuna-api.onrender.com/api/goals/reopen/${goalId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Error response data:", errorData);
+        throw new Error("Failed to reopen goal");
+      }
+
+      fetchGoalData();
+      Alert.alert("Sucesso", "Meta reaberta com sucesso.");
+    } catch (error) {
+      Alert.alert("Erro", "Falha ao reabrir a meta.");
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!updatedGoalData) {
+        fetchGoalData();
+      }
+    }, [goalId, token, updatedGoalData])
+  );
 
   if (loading) {
     return <Loading title="Carregando detalhes da meta..." />;
@@ -166,7 +231,10 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
   return (
     <View style={styles.container}>
       <Header title="Detalhes da Meta" onRefresh={fetchGoalData} />
-      <ScrollView>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+      >
         <View style={styles.metaContainer}>
           <Text style={styles.metaTitle}>{goalData.name}</Text>
 
@@ -272,7 +340,7 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
                   </Text>
                   <Text style={styles.stepDetail}>Prazo: {step.timeline}</Text>
                   <Text style={styles.stepDetail}>Ações:</Text>
-                  {renderListItems(step.actions)}
+                  {step.actions && renderListItems(step.actions)}
                 </View>
               ))}
             </List.Accordion>
@@ -287,7 +355,18 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
               title="Recursos"
               left={(props) => <List.Icon {...props} icon="book" />}
             >
-              {renderListItems(planning.resources)}
+              {planning.resources.map((resource, index) => (
+                <View key={index} style={styles.resourceItem}>
+                  <Text style={styles.resourceText}>
+                    <Text style={styles.resourceLabel}>Descrição:</Text>{" "}
+                    {resource.description}
+                  </Text>
+                  <Text style={styles.resourceText}>
+                    <Text style={styles.resourceLabel}>Recurso:</Text>{" "}
+                    {resource.resource}
+                  </Text>
+                </View>
+              ))}
             </List.Accordion>
             <Divider style={styles.divider} />
           </>
@@ -300,7 +379,7 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
               title="Dicas de Poupança"
               left={(props) => <List.Icon {...props} icon="lightbulb" />}
             >
-              {renderListItems(planning.savings_tips)}
+              {planning.savings_tips && renderListItems(planning.savings_tips)}
             </List.Accordion>
             <Divider style={styles.divider} />
           </>
@@ -313,7 +392,8 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
               title="Plano de Contingência"
               left={(props) => <List.Icon {...props} icon="alert" />}
             >
-              {renderListItems(planning.contingency_plan)}
+              {planning.contingency_plan &&
+                renderListItems(planning.contingency_plan)}
             </List.Accordion>
             <Divider style={styles.divider} />
           </>
@@ -327,7 +407,8 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
                 title="Fontes de Renda Adicional"
                 left={(props) => <List.Icon {...props} icon="cash-multiple" />}
               >
-                {renderListItems(planning.additional_income_sources)}
+                {planning.additional_income_sources &&
+                  renderListItems(planning.additional_income_sources)}
               </List.Accordion>
               <Divider style={styles.divider} />
             </>
@@ -341,7 +422,8 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
                 title="Ajustes de Monitoramento"
                 left={(props) => <List.Icon {...props} icon="adjust" />}
               >
-                {renderListItems(planning.monitoring_adjustments)}
+                {planning.monitoring_adjustments &&
+                  renderListItems(planning.monitoring_adjustments)}
               </List.Accordion>
             </>
           )}
@@ -373,16 +455,35 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
           </>
         )}
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.deleteButton} onPress={deleteGoal}>
-            <MaterialIcons name="delete" size={24} color="#fff" />
-          </TouchableOpacity>
+        <View style={styles.topButtonContainer}>
           <TouchableOpacity
             style={styles.goalsButton}
             onPress={() => navigation.navigate("Metas")}
           >
             <Text style={styles.buttonText}>Ir para Minhas Metas</Text>
           </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.deleteButton} onPress={deleteGoal}>
+              <MaterialIcons name="delete" size={24} color="#fff" />
+            </TouchableOpacity>
+            {goalData.status ? (
+              <TouchableOpacity
+                style={styles.reopenButton}
+                onPress={reopenGoal}
+              >
+                <MaterialIcons name="replay" size={24} color="#fff" />
+                <Text style={styles.buttonText}>Reabrir Meta</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.finalizeButton}
+                onPress={finalizeGoal}
+              >
+                <MaterialIcons name="check" size={24} color="#fff" />
+                <Text style={styles.buttonText}>Finalizar Meta</Text>
+              </TouchableOpacity>
+            )}
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -432,8 +533,43 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginBottom: 5,
   },
+  topButtonContainer: {
+    width: "100%",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    padding: 20,
+    alignItems: "center",
+  },
+  transactionButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    padding: 20,
+  },
+  transactionButton: {
+    backgroundColor: "#9a67ea",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 10,
+    marginRight: 10,
+  },
+  finalizeButton: {
+    backgroundColor: "#28a745",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 10,
+  },
+  reopenButton: {
+    backgroundColor: "#ffc107",
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 15,
+    borderRadius: 10,
+  },
   buttonContainer: {
     flexDirection: "row",
+    gap: 20,
     justifyContent: "space-between",
     padding: 20,
     alignItems: "center",
@@ -519,22 +655,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#856404",
   },
-  transactionButtonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    padding: 20,
+  resourceItem: {
+    marginBottom: 10,
   },
-  transactionButton: {
-    backgroundColor: "#9a67ea",
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    borderRadius: 10,
+  resourceText: {
+    fontSize: 14,
+    marginLeft: 20,
   },
-  transactionButtonText: {
-    marginLeft: 10,
-    color: "#fff",
-    fontSize: 16,
+  resourceLabel: {
+    fontWeight: "bold",
   },
 });
 

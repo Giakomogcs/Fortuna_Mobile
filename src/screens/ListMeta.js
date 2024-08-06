@@ -57,11 +57,26 @@ const ListMeta = ({ navigation }) => {
     >
       <View style={styles.goalContainer}>
         <Text style={styles.goalName}>{item.name}</Text>
-        <Text>Patrimônio: R${item.patrimony}</Text>
-        <Text>Meu Patrimônio: R${item.my_patrimony}</Text>
-        <Text>Dividendos: R${item.dividends}</Text>
-        <Text>Aporte Mensal: R${item.monthly_aport}</Text>
-        <Text>Tempo Desejado: {item.time_desired} anos</Text>
+        <View style={styles.goalDetails}>
+          <Text style={styles.label}>Patrimônio Atual:</Text>
+          <Text style={styles.value}>R${item.patrimony}</Text>
+        </View>
+        <View style={styles.goalDetails}>
+          <Text style={styles.label}>Meu Patrimônio:</Text>
+          <Text style={styles.value}>R${item.my_patrimony}</Text>
+        </View>
+        <View style={styles.goalDetails}>
+          <Text style={styles.label}>Dividendos Atuais:</Text>
+          <Text style={styles.value}>R${item.dividends}</Text>
+        </View>
+        <View style={styles.goalDetails}>
+          <Text style={styles.label}>Aporte Mensal:</Text>
+          <Text style={styles.value}>R${item.monthly_aport.toFixed(2)}</Text>
+        </View>
+        <View style={styles.goalDetails}>
+          <Text style={styles.label}>Tempo Desejado:</Text>
+          <Text style={styles.value}>{item.time_desired.toFixed(1)} anos</Text>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -78,6 +93,12 @@ const ListMeta = ({ navigation }) => {
         <Loading title="Carregando metas..." />
       ) : (
         <FlatList
+          style={{
+            marginTop: 10,
+            width: "90%",
+            alignContent: "center",
+            marginLeft: 30,
+          }}
           data={data}
           renderItem={renderGoal}
           showsVerticalScrollIndicator={false}
@@ -97,13 +118,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#fff",
   },
-
   goalContainer: {
     backgroundColor: "#f0f0f0",
     padding: 20,
     marginVertical: 10,
     borderRadius: 10,
-    width: "100%",
+    width: "90%",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -114,10 +134,25 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   goalName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
     color: "#333",
+  },
+  goalDetails: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 2,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#6c757d",
+  },
+  value: {
+    fontSize: 16,
+    fontWeight: "400",
+    color: "#343a40",
   },
   createButton: {
     backgroundColor: "#9a67ea",

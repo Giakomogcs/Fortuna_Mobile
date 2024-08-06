@@ -4,6 +4,7 @@ import { useTheme, Box } from "native-base";
 import { TokenContext } from "@hooks/TokenContext";
 import AuthRoutes from "./auth.routes";
 import AppRoutes from "./app.routes";
+import AppTabs from "./StackNavigator";
 import { Loading } from "@components/Loading";
 
 const Routes = () => {
@@ -20,7 +21,7 @@ const Routes = () => {
   return (
     <Box flex={1} bg={"gray.700"}>
       <NavigationContainer theme={theme}>
-        {token ? <AppRoutes /> : <AuthRoutes />}
+        {token ? <AppTabs /> : <AuthRoutes />}
       </NavigationContainer>
     </Box>
   );
