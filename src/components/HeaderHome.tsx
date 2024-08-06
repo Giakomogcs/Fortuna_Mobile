@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   initialsText: {
-    color: "#9a67ea",
+    color: THEME.colors.purple[500],
     fontWeight: "bold",
     fontSize: 18,
   },

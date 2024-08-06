@@ -7,15 +7,22 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Alert,
+  Image,
 } from "react-native";
-import { TokenContext } from "@hooks/TokenContext"; // Importar o contexto do token
+import { TokenContext } from "@hooks/TokenContext";
+import { AppError } from "@utils/appError";
+import { THEME } from "src/theme";
 
-const LoginScreen = ({ navigation }) => {
+interface LoginScreenProps {
+  navigation: any;
+}
+
+const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { token, setTokenAndUser } = useContext(TokenContext); // Usar o contexto do token
+  const { token, setTokenAndUser } = useContext(TokenContext);
 
   const handleLogin = async () => {
     setLoading(true);
@@ -46,13 +53,17 @@ const LoginScreen = ({ navigation }) => {
       const authData = JSON.parse(responseText);
       const token = authData.token;
       const userData = authData.user;
-      setTokenAndUser(token, userData); // Armazenar o token e os dados do usuário no contexto
+      setTokenAndUser(token, userData);
       setResponseMessage("Login realizado com sucesso.");
       Alert.alert("Sucesso", "Login realizado com sucesso.");
-    } catch (error) {
-      console.error("Login Error:", error);
-      setResponseMessage(`Erro: ${error.message}`);
-      Alert.alert("Erro", `Ocorreu um erro: ${error.message}`);
+    } catch (error: unknown) {
+      const appError =
+        error instanceof AppError
+          ? error
+          : new AppError("Ocorreu um erro desconhecido.");
+      console.error("Login Error:", appError.message);
+      setResponseMessage(`Erro: ${appError.message}`);
+      Alert.alert("Erro", `Ocorreu um erro: ${appError.message}`);
     } finally {
       setLoading(false);
     }
@@ -66,10 +77,9 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.welcomeText}>Nome de usuário,</Text>
-        <Text style={styles.welcomeBackText}>Que bom te ter de volta!</Text>
-      </View>
+      <Image source={require("../../assets/logo.png")} style={styles.logo} />
+      <Text style={styles.tagline}>Vamos fazer fortuna</Text>
+      <Text style={styles.appName}>Fortuna</Text>
       <TextInput
         style={styles.input}
         placeholder="Digite seu email"
@@ -104,23 +114,26 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#f7f7f7",
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
   },
-  header: {
-    alignItems: "center",
-    marginBottom: 40,
+  logo: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
   },
-  welcomeText: {
-    fontSize: 18,
-    color: "#000",
+  tagline: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 10,
   },
-  welcomeBackText: {
-    fontSize: 18,
-    color: "#000",
+  appName: {
+    fontSize: 32,
+    color: "#333",
     fontWeight: "bold",
+    marginBottom: 40,
   },
   input: {
     width: "100%",
@@ -130,9 +143,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingLeft: 10,
     marginBottom: 20,
+    backgroundColor: "#fff",
   },
   button: {
-    backgroundColor: "#9a67ea",
+    backgroundColor: THEME.colors.purple[500],
     paddingVertical: 15,
     paddingHorizontal: 80,
     borderRadius: 10,
@@ -141,12 +155,14 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "bold",
   },
   createAccountText: {
     color: "#9a67ea",
+    marginTop: 20,
   },
   responseMessage: {
-    color: "#000",
+    color: "#ff0000",
     marginTop: 20,
     textAlign: "center",
   },
