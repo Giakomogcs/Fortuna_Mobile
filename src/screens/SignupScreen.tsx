@@ -10,10 +10,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
-import { TokenContext } from "../hooks/TokenContext";
+import { TokenContext } from "@hooks/TokenContext";
 import { parse, format } from "date-fns";
+import { THEME } from "src/theme";
 
-const SignupScreen = ({ navigation }) => {
+const SignupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
@@ -113,7 +114,7 @@ const SignupScreen = ({ navigation }) => {
     }
   };
 
-  const formatBirthday = (text) => {
+  const formatBirthday = (text: string) => {
     const cleaned = text.replace(/\D/g, "");
     let formatted = "";
 
@@ -160,7 +161,7 @@ const SignupScreen = ({ navigation }) => {
         />
         <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.input}
+            style={styles.passwordInput}
             placeholder="Sua senha"
             secureTextEntry={secureTextEntry}
             value={password}
@@ -178,7 +179,7 @@ const SignupScreen = ({ navigation }) => {
         </View>
         <View style={styles.passwordContainer}>
           <TextInput
-            style={styles.input}
+            style={styles.passwordInput}
             placeholder="Confirme sua senha"
             secureTextEntry={secureTextEntry}
             value={confirmPassword}
@@ -250,7 +251,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
-    flex: 1,
+    backgroundColor: "#fff",
   },
   passwordContainer: {
     flexDirection: "row",
@@ -260,9 +261,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
+    backgroundColor: "#fff",
+  },
+  passwordInput: {
+    flex: 1,
   },
   button: {
-    backgroundColor: "#8A2BE2",
+    backgroundColor: THEME.colors.purple[500],
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
@@ -279,10 +284,10 @@ const styles = StyleSheet.create({
   },
   loginText: {
     textAlign: "center",
-    color: "#000",
+    color: THEME.colors.gray[700],
   },
   loginTextBold: {
-    color: "#8A2BE2",
+    color: THEME.colors.purple[500],
     fontWeight: "bold",
   },
 });

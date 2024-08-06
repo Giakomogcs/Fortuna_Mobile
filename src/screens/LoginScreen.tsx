@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   appName: {
     fontSize: 32,
-    color: "#333",
+    color: THEME.colors.gray[700],
     fontWeight: "bold",
     marginBottom: 40,
   },
