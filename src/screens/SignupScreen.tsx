@@ -24,7 +24,7 @@ const SignupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
   const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
-  const { setToken } = useContext(TokenContext);
+  const { setTokenAndUser } = useContext(TokenContext);
 
   const handleRegister = async () => {
     if (
@@ -50,7 +50,7 @@ const SignupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
     }
 
     const parseBirthday = parse(birthday, "dd/MM/yyyy", new Date());
-    const formattedbirthday = format(
+    const formattedBirthday = format(
       parseBirthday,
       "yyyy-MM-dd HH:mm:ss.SSSSSS"
     );
@@ -66,9 +66,9 @@ const SignupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
           },
           body: JSON.stringify({
             name,
-            email,
+            email: email.toLowerCase(),
             password,
-            birthday: formattedbirthday,
+            birthday: formattedBirthday,
           }),
         }
       );
@@ -76,12 +76,14 @@ const SignupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
       const registerData = await registerResponse.json();
 
       if (!registerResponse.ok) {
-        setResponseMessage(registerData.message || "Failed to register.");
+        setResponseMessage(registerData.message || "Erro ao criar a conta.");
         setLoading(false);
         return;
       }
 
-      // Login após cadastro bem-sucedido
+      // Aguarda 2 segundos para garantir que a conta seja criada no banco de dados
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
       const loginResponse = await fetch(
         "https://fortuna-api.onrender.com/api/sessions",
         {
@@ -90,23 +92,27 @@ const SignupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email,
+            email: email.toLowerCase(),
             password,
           }),
         }
       );
 
+      const loginData = await loginResponse.json();
+
       if (!loginResponse.ok) {
-        setResponseMessage("Falha ao autenticar após cadastro.");
+        setResponseMessage(
+          loginData.message || "Falha ao autenticar após cadastro."
+        );
         Alert.alert("Erro", "Falha ao autenticar após cadastro.");
         setLoading(false);
         return;
       }
 
-      const loginData = await loginResponse.json();
       const token = loginData.token;
-      setToken(token);
+      setTokenAndUser(token, loginData.user);
     } catch (error) {
+      console.error("Erro:", error);
       setResponseMessage("Ocorreu um erro.");
       Alert.alert("Erro", "Ocorreu um erro.");
     } finally {
@@ -232,7 +238,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: THEME.colors.background[500],
   },
   formContainer: {
     padding: 20,
@@ -271,7 +277,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
-    marginBottom: 20,
+    marginVertical: 20,
   },
   buttonText: {
     color: "#fff",

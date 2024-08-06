@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderApp";
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/MaterialIcons";
 import { THEME } from "src/theme";
 
 const GoalCreatePlanScreen = ({ route, navigation }) => {
@@ -56,7 +56,7 @@ const GoalCreatePlanScreen = ({ route, navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9a67ea" />
+        <ActivityIndicator size="large" color={THEME.colors.purple[500]} />
         <Text style={styles.loadingText}>Carregando...</Text>
       </View>
     );
@@ -75,23 +75,47 @@ const GoalCreatePlanScreen = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <Header title="Plano de Ação" onRefresh={fetchGoalData} />
-      <ScrollView>
-        <Text style={styles.subtitle}>Objetivo</Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.sectionContainer}>
+          <Icon name="flag" size={24} color={THEME.colors.purple[500]} />
+          <Text style={styles.subtitle}>Objetivo</Text>
+        </View>
         <Text style={styles.text}>{goalData.planning.objective}</Text>
 
-        <Text style={[styles.subtitle, { marginBottom: 10 }]}>Passos</Text>
+        <View style={styles.sectionContainer}>
+          <Icon
+            name="directions-walk"
+            size={24}
+            color={THEME.colors.purple[500]}
+          />
+          <Text style={[styles.subtitle, { marginBottom: 10 }]}>Passos</Text>
+        </View>
         {goalData.planning.steps.map((step, index) => (
           <View key={index} style={styles.stepContainer}>
             <Text style={styles.text}>
               <Text style={styles.bold}>{step.description}</Text>
             </Text>
-            <Text style={styles.text}>
-              <Text style={styles.bold}>Prazo:</Text> {step.deadline}
-            </Text>
-            <Text style={styles.text}>
-              <Text style={styles.bold}>Indicador de Sucesso:</Text>{" "}
-              {step.success_indicator}
-            </Text>
+            <View style={styles.iconTextContainer}>
+              <Icon
+                name="calendar-today"
+                size={20}
+                color={THEME.colors.purple[500]}
+              />
+              <Text style={styles.text}>
+                <Text style={styles.bold}>Prazo:</Text> {step.deadline}
+              </Text>
+            </View>
+            <View style={styles.iconTextContainer}>
+              <Icon
+                name="check-circle"
+                size={20}
+                color={THEME.colors.purple[500]}
+              />
+              <Text style={styles.text}>
+                <Text style={styles.bold}>Indicador de Sucesso:</Text>{" "}
+                {step.success_indicator}
+              </Text>
+            </View>
           </View>
         ))}
 
@@ -113,27 +137,39 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: THEME.colors.background,
   },
+  scrollContainer: {
+    padding: 20,
+  },
+  sectionContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
   subtitle: {
     fontSize: 20,
-    color: "#2c3e50",
-    marginBottom: 10,
-    paddingHorizontal: 20,
+    color: THEME.colors.purple[700],
+    marginLeft: 10,
     fontWeight: "bold",
   },
   text: {
     fontSize: 16,
-    marginBottom: 5,
+    marginBottom: 10,
     paddingHorizontal: 20,
   },
   bold: {
     fontWeight: "bold",
   },
   stepContainer: {
-    backgroundColor: "#ecf0f1",
+    backgroundColor: THEME.colors.gray[100],
     padding: 15,
     borderRadius: 5,
     marginBottom: 10,
     marginHorizontal: 20,
+  },
+  iconTextContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
   },
   buttonContainer: {
     padding: 20,
@@ -158,7 +194,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#9a67ea",
+    color: THEME.colors.purple[500],
   },
   errorContainer: {
     flex: 1,

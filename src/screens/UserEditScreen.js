@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import {
   View,
   Text,
@@ -11,10 +11,15 @@ import {
   Image,
 } from "react-native";
 import Slider from "@react-native-community/slider";
+import { useFocusEffect } from "@react-navigation/native";
 import { TokenContext } from "@hooks/TokenContext";
 import { parseISO, format, parse } from "date-fns";
 import * as ImagePicker from "expo-image-picker";
 import * as FileSystem from "expo-file-system";
+import Header from "@components/HeaderApp";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { THEME } from "src/theme";
+import { Loading } from "@components/Loading";
 
 const getInitials = (name) => {
   const initials = name
@@ -41,34 +46,36 @@ const UserEditScreen = ({ navigation }) => {
   const [profilePicture, setProfilePicture] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
 
-  useEffect(() => {
-    if (contextUser) {
-      setName(contextUser.name || "");
-      setEmail(contextUser.email || "");
-      if (contextUser.birthday) {
-        const parsedBirthday = parseISO(contextUser.birthday);
-        setBirthday(format(parsedBirthday, "dd/MM/yyyy"));
+  useFocusEffect(
+    useCallback(() => {
+      if (contextUser) {
+        setName(contextUser.name || "");
+        setEmail(contextUser.email || "");
+        if (contextUser.birthday) {
+          const parsedBirthday = parseISO(contextUser.birthday);
+          setBirthday(format(parsedBirthday, "dd/MM/yyyy"));
+        }
+        setRisk(contextUser.risk ? contextUser.risk * 100 : 0);
+        setSalary(contextUser.salary ? contextUser.salary.toString() : "");
+        const knowledge = contextUser.knowledge || {};
+        setVariableIncome(
+          knowledge.variable_income
+            ? parseFloat(knowledge.variable_income) * 100
+            : 0
+        );
+        setFixedIncome(
+          knowledge.fixed_income ? parseFloat(knowledge.fixed_income) * 100 : 0
+        );
+        setProfilePicture(contextUser.picture);
+        if (contextUser.picture) {
+          fetchProfileImage(contextUser.picture);
+        }
+        setLoading(false);
+      } else {
+        console.log("No user data available");
       }
-      setRisk(contextUser.risk ? contextUser.risk * 100 : 0);
-      setSalary(contextUser.salary ? contextUser.salary.toString() : "");
-      const knowledge = contextUser.knowledge || {};
-      setVariableIncome(
-        knowledge.variable_income
-          ? parseFloat(knowledge.variable_income) * 100
-          : 0
-      );
-      setFixedIncome(
-        knowledge.fixed_income ? parseFloat(knowledge.fixed_income) * 100 : 0
-      );
-      setProfilePicture(contextUser.picture);
-      if (contextUser.picture) {
-        fetchProfileImage(contextUser.picture);
-      }
-      setLoading(false);
-    } else {
-      console.log("No user data available");
-    }
-  }, [contextUser]);
+    }, [contextUser])
+  );
 
   const fetchProfileImage = async (picture) => {
     setImageLoading(true);
@@ -124,11 +131,11 @@ const UserEditScreen = ({ navigation }) => {
         password,
         old_password: oldPassword,
         birthday: formattedBirthday,
-        risk: (risk / 100).toFixed(2),
+        risk: risk / 100,
         salary,
         knowledge: {
-          variable_income: (variableIncome / 100).toFixed(2),
-          fixed_income: (fixedIncome / 100).toFixed(2),
+          variable_income: variableIncome / 100,
+          fixed_income: fixedIncome / 100,
         },
         picture: profilePicture,
       };
@@ -227,7 +234,7 @@ const UserEditScreen = ({ navigation }) => {
 
       if (fileInfo.size / 1024 / 1024 > 10) {
         // Configura o limite máximo para 10 MB
-        Alert.alert("Erro", "A imagem deve ter no máximo 45MB.");
+        Alert.alert("Erro", "A imagem deve ter no máximo 10MB.");
         return;
       }
 
@@ -263,143 +270,163 @@ const UserEditScreen = ({ navigation }) => {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.headerText}>Edite suas informações</Text>
-        {imageLoading ? (
-          <ActivityIndicator size="large" color="#8A2BE2" />
-        ) : profileImageUrl ? (
-          <Image
-            source={{
-              uri: profileImageUrl,
-            }}
-            style={styles.profileImage}
-          />
-        ) : (
-          <View style={styles.initialsContainer}>
-            <Text style={styles.initialsText}>{getInitials(name)}</Text>
+    <View style={styles.container}>
+      <Header title="Minha conta" />
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.formContainer}>
+          <View style={styles.profileImageContainer}>
+            {imageLoading ? (
+              <ActivityIndicator size="large" color="#8A2BE2" />
+            ) : profileImageUrl ? (
+              <Image
+                source={{
+                  uri: profileImageUrl,
+                }}
+                style={styles.profileImage}
+              />
+            ) : (
+              <View style={styles.initialsContainer}>
+                <Text style={styles.initialsText}>{getInitials(name)}</Text>
+              </View>
+            )}
+            {!imageLoading && (
+              <TouchableOpacity
+                style={styles.imagePickerButton}
+                onPress={handleSelectImage}
+              >
+                <Icon name="photo-camera" size={24} color="#fff" />
+              </TouchableOpacity>
+            )}
           </View>
+          <TextInput
+            style={styles.input}
+            placeholder="Seu nome"
+            value={name}
+            onChangeText={setName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Seu email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha antiga"
+            value={oldPassword}
+            onChangeText={setOldPassword}
+            secureTextEntry
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Senha"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Data de nascimento (DD/MM/YYYY)"
+            value={birthday}
+            onChangeText={formatBirthday}
+            maxLength={10}
+            keyboardType="numeric"
+          />
+          <View style={styles.sectionContainer}>
+            <Text style={styles.label}>
+              <Icon name="security" size={20} color="#8A2BE2" /> Risco
+            </Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={100}
+              step={1}
+              value={risk}
+              onValueChange={setRisk}
+              minimumTrackTintColor="#9a67ea"
+              maximumTrackTintColor="#ccc"
+              thumbTintColor="#9a67ea"
+            />
+            <Text style={styles.percentage}>{risk.toFixed(0)}%</Text>
+          </View>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.label}>
+              <Icon name="attach-money" size={20} color="#8A2BE2" /> Salário
+            </Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Salário"
+              value={salary}
+              onChangeText={setSalary}
+              keyboardType="numeric"
+            />
+          </View>
+          <View style={styles.sectionContainer}>
+            <Text style={styles.label}>
+              <Icon name="school" size={20} color="#8A2BE2" /> Conhecimento em:
+            </Text>
+            <Text style={styles.subLabel}>Renda Variável</Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={100}
+              step={1}
+              value={variableIncome}
+              onValueChange={setVariableIncome}
+              minimumTrackTintColor="#9a67ea"
+              maximumTrackTintColor="#ccc"
+              thumbTintColor="#9a67ea"
+            />
+            <Text style={styles.percentage}>{variableIncome.toFixed(0)}%</Text>
+            <Text style={styles.subLabel}>Renda Fixa</Text>
+            <Slider
+              style={styles.slider}
+              minimumValue={0}
+              maximumValue={100}
+              step={1}
+              value={fixedIncome}
+              onValueChange={setFixedIncome}
+              minimumTrackTintColor="#9a67ea"
+              maximumTrackTintColor="#ccc"
+              thumbTintColor="#9a67ea"
+            />
+            <Text style={styles.percentage}>{fixedIncome.toFixed(0)}%</Text>
+          </View>
+        </View>
+      </ScrollView>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleUpdate}
+        disabled={loading}
+      >
+        {loading ? (
+          <Loading title="Carregando..." />
+        ) : (
+          <Text style={styles.buttonText}>Atualizar</Text>
         )}
-        <TouchableOpacity
-          style={styles.imagePickerButton}
-          onPress={handleSelectImage}
-        >
-          <Text style={styles.buttonText}>Selecionar Foto</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          placeholder="Seu nome"
-          value={name}
-          onChangeText={setName}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Seu email"
-          value={email}
-          onChangeText={setEmail}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha antiga"
-          value={oldPassword}
-          onChangeText={setOldPassword}
-          secureTextEntry
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Senha"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Data de nascimento (DD/MM/YYYY)"
-          value={birthday}
-          onChangeText={formatBirthday}
-          maxLength={10}
-          keyboardType="numeric"
-        />
-        <Text style={styles.label}>Risco</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={0}
-          maximumValue={100}
-          step={1}
-          value={risk}
-          onValueChange={setRisk}
-          minimumTrackTintColor="#9a67ea"
-          maximumTrackTintColor="#ccc"
-          thumbTintColor="#9a67ea"
-        />
-        <Text style={styles.percentage}>{risk}%</Text>
-        <Text style={styles.subLabel}>Salário</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Salário"
-          value={salary}
-          onChangeText={setSalary}
-          keyboardType="numeric"
-        />
-        <Text style={styles.label}>Conhecimento em:</Text>
-        <Text style={styles.subLabel}>Renda Variável</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={0}
-          maximumValue={100}
-          step={1}
-          value={variableIncome}
-          onValueChange={setVariableIncome}
-          minimumTrackTintColor="#9a67ea"
-          maximumTrackTintColor="#ccc"
-          thumbTintColor="#9a67ea"
-        />
-        <Text style={styles.percentage}>{variableIncome}%</Text>
-        <Text style={styles.subLabel}>Renda Fixa</Text>
-        <Slider
-          style={styles.slider}
-          minimumValue={0}
-          maximumValue={100}
-          step={1}
-          value={fixedIncome}
-          onValueChange={setFixedIncome}
-          minimumTrackTintColor="#9a67ea"
-          maximumTrackTintColor="#ccc"
-          thumbTintColor="#9a67ea"
-        />
-        <Text style={styles.percentage}>{fixedIncome}%</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleUpdate}
-          disabled={loading}
-        >
-          {loading ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.buttonText}>Atualizar</Text>
-          )}
-        </TouchableOpacity>
-        {responseMessage ? (
-          <Text style={styles.responseMessage}>{responseMessage}</Text>
-        ) : null}
-      </View>
-    </ScrollView>
+      </TouchableOpacity>
+      {responseMessage ? (
+        <Text style={styles.responseMessage}>{responseMessage}</Text>
+      ) : null}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    justifyContent: "center",
+    flex: 1,
     backgroundColor: "#fff",
   },
-  formContainer: {
+  scrollContainer: {
+    flexGrow: 1,
     padding: 20,
   },
-  headerText: {
-    fontSize: 18,
-    textAlign: "center",
-    marginBottom: 20,
+  formContainer: {
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
   input: {
     borderWidth: 1,
@@ -407,18 +434,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     marginBottom: 10,
-    flex: 1,
+    width: "100%",
   },
   label: {
     fontSize: 18,
     color: "#000",
     marginBottom: 10,
+    flexDirection: "row",
+    alignItems: "center",
   },
   subLabel: {
     fontSize: 16,
     color: "#000",
     marginTop: 20,
     marginBottom: 10,
+  },
+  sectionContainer: {
+    width: "100%",
+    backgroundColor: THEME.colors.gray[100],
+    padding: 15,
+    borderRadius: 8,
+    marginBottom: 20,
   },
   slider: {
     width: "100%",
@@ -435,7 +471,10 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderRadius: 8,
     alignItems: "center",
-    marginBottom: 20,
+    justifyContent: "center",
+    marginVertical: 20,
+    marginHorizontal: "auto",
+    width: 200,
   },
   buttonText: {
     color: "#fff",
@@ -450,19 +489,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#fff", 
   },
   loadingText: {
     marginTop: 10,
     fontSize: 16,
     color: "#8A2BE2",
   },
+  profileImageContainer: {
+    position: "relative",
+    marginBottom: 20,
+    alignItems: "center",
+  },
   profileImage: {
     width: 100,
     height: 100,
     borderRadius: 50,
     alignSelf: "center",
-    marginBottom: 20,
   },
   initialsContainer: {
     width: 100,
@@ -472,7 +514,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
-    marginBottom: 20,
   },
   initialsText: {
     color: "#fff",
@@ -481,10 +522,14 @@ const styles = StyleSheet.create({
   },
   imagePickerButton: {
     backgroundColor: "#8A2BE2",
-    paddingVertical: 10,
-    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 8,
+    borderRadius: 50,
+    position: "absolute",
+    right: 0,
+    bottom: 0,
     alignItems: "center",
-    marginBottom: 20,
+    justifyContent: "center",
   },
 });
 

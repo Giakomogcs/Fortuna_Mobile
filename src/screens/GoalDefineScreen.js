@@ -10,12 +10,17 @@ import {
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderApp";
+import Icon from "react-native-vector-icons/MaterialIcons";
+import { useTheme } from "native-base";
+import { THEME } from "src/theme";
 
 const GoalDefineScreen = ({ route, navigation }) => {
   const initialGoalData = route.params;
   const [goalData, setGoalData] = useState(initialGoalData);
   const [loading, setLoading] = useState(true);
+  const [showFullSummary, setShowFullSummary] = useState(false);
   const { token } = useContext(TokenContext);
+  const theme = useTheme();
 
   useEffect(() => {
     const fetchGoalData = async () => {
@@ -76,7 +81,6 @@ const GoalDefineScreen = ({ route, navigation }) => {
 
       const createdGoal = await response.json();
 
-      Alert.alert("Meta Criada", "Sua meta foi criada com sucesso!");
       const goalId = createdGoal.goal_id.id; // Extraindo o ID da meta criada
       navigation.navigate("GoalCreatePlan", { goalId });
     } catch (error) {
@@ -89,73 +93,118 @@ const GoalDefineScreen = ({ route, navigation }) => {
     navigation.navigate("GoalCreate", goalData);
   };
 
+  const getLimitedSummary = (summary) => {
+    const maxLength = 250; // Limite de caracteres para o resumo
+    if (summary.length > maxLength && !showFullSummary) {
+      return `${summary.substring(0, maxLength)}...`;
+    }
+    return summary;
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#9a67ea" />
-        <Text style={styles.loadingText}>Carregando...</Text>
+        <Loading title="Definindo meta..." />
       </View>
     );
   }
-  
+
   return (
     <View style={styles.container}>
-      <Header title="Definir meta" />
+      <Header title="Definir Meta" />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.title}>Resumo da Meta</Text>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Nome:</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="label" size={20} />
+            <Text style={styles.label}>Nome:</Text>
+          </View>
           <Text style={styles.value}>{goalData.name}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Tipo de Meta:</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="category" size={20} />
+            <Text style={styles.label}>Tipo de Meta:</Text>
+          </View>
           <Text style={styles.value}>
             {goalData.type_goal ? "Dividendo" : "Patrimônio"}
           </Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Patrimônio Desejado:</Text>
-          <Text style={styles.value}>{goalData.patrimony}</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="attach-money" size={20} />
+            <Text style={styles.label}>Patrimônio Desejado:</Text>
+          </View>
+          <Text style={styles.value}>{goalData.patrimony.toFixed(2)}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Dividendos:</Text>
-          <Text style={styles.value}>{goalData.dividends}</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="trending-up" size={20} />
+            <Text style={styles.label}>Dividendos:</Text>
+          </View>
+          <Text style={styles.value}>{goalData.dividends.toFixed(2)}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Meu Patrimônio:</Text>
-          <Text style={styles.value}>{goalData.my_patrimony}</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="account-balance" size={20} />
+            <Text style={styles.label}>Meu Patrimônio:</Text>
+          </View>
+          <Text style={styles.value}>{goalData.my_patrimony.toFixed(2)}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Taxa:</Text>
-          <Text style={styles.value}>{goalData.rate * 100}%</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="show-chart" size={20} />
+            <Text style={styles.label}>Taxa:</Text>
+          </View>
+          <Text style={styles.value}>{(goalData.rate * 100).toFixed(2)}%</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Tempo Desejado (anos):</Text>
-          <Text style={styles.value}>{goalData.time_desired}</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="access-time" size={20} />
+            <Text style={styles.label}>Tempo Desejado (anos):</Text>
+          </View>
+          <Text style={styles.value}>{goalData.time_desired.toFixed(2)}</Text>
         </View>
         <View style={styles.detailContainer}>
-          <Text style={styles.label}>Aporte Mensal:</Text>
+          <View style={styles.labelContainer}>
+            <Icon name="event-repeat" size={20} />
+            <Text style={styles.label}>Aporte Mensal:</Text>
+          </View>
           <Text style={styles.value}>{goalData.monthly_aport.toFixed(2)}</Text>
         </View>
         <View style={styles.summaryContainer}>
-          <Text style={styles.label}>Resumo:</Text>
-          <Text style={styles.summary}>{goalData.summary}</Text>
-        </View>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.createButton}
-            onPress={handleCreateGoal}
-          >
-            <Text style={styles.buttonText}>Criar Meta</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.rewriteButton}
-            onPress={handleRewriteGoal}
-          >
-            <Text style={styles.buttonText}>Reescrever</Text>
-          </TouchableOpacity>
+          <View style={styles.labelContainer}>
+            <Icon name="description" size={20} />
+            <Text style={styles.label}>Resumo:</Text>
+          </View>
+          <Text style={styles.summary}>
+            {getLimitedSummary(goalData.summary)}
+          </Text>
+          {goalData.summary.length > 250 && (
+            <TouchableOpacity
+              onPress={() => setShowFullSummary(!showFullSummary)}
+            >
+              <Text style={styles.showMoreText}>
+                {showFullSummary ? "Mostrar menos" : "Mostrar mais"}
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
       </ScrollView>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.button, styles.createButton]}
+          onPress={handleCreateGoal}
+        >
+          <Text style={styles.buttonText}>Criar Meta</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, styles.rewriteButton]}
+          onPress={handleRewriteGoal}
+        >
+          <Text style={styles.buttonText}>Reescrever</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
@@ -177,10 +226,18 @@ const styles = StyleSheet.create({
   },
   detailContainer: {
     marginBottom: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  labelContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 5,
   },
   label: {
     fontWeight: "bold",
-    marginBottom: 5,
+    marginLeft: 5,
   },
   value: {
     fontSize: 16,
@@ -193,28 +250,32 @@ const styles = StyleSheet.create({
     fontSize: 16,
     lineHeight: 24,
   },
+  showMoreText: {
+    color: "#6200EE",
+    marginTop: 10,
+    fontWeight: "bold",
+  },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 20,
+    marginVertical: 20,
+  },
+  button: {
+    padding: 15,
+    borderRadius: 10,
+    width: "40%",
+    alignItems: "center",
   },
   createButton: {
     backgroundColor: "#4CAF50",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    width: "40%",
   },
   rewriteButton: {
     backgroundColor: "#F44336",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    width: "40%",
   },
   buttonText: {
     color: "#fff",
     fontSize: 16,
+    fontWeight: "bold",
   },
   loadingContainer: {
     flex: 1,
@@ -224,7 +285,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 10,
     fontSize: 16,
-    color: "#9a67ea",
+    color: THEME.colors.purple[500],
   },
 });
 

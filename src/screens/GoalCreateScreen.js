@@ -5,14 +5,17 @@ import {
   TextInput,
   Switch,
   StyleSheet,
-  Button,
+  TouchableOpacity,
   ScrollView,
   ActivityIndicator,
   SafeAreaView,
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderApp";
-import { useTheme } from 'native-base';
+import { useTheme } from "native-base";
+import { MaterialIcons } from "@expo/vector-icons";
+import { AppError } from "@utils/appError";
+import { Loading } from "@components/Loading";
 
 const GoalCreateScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -57,36 +60,42 @@ const GoalCreateScreen = ({ navigation }) => {
       );
 
       if (responsePreview.ok) {
-        try {
-          const resultPreview = await responsePreview.json();
-          setResponseMessage(JSON.stringify(resultPreview, null, 2));
+        const resultPreview = await responsePreview.json();
+        setResponseMessage(JSON.stringify(resultPreview, null, 2));
 
-          const responseAnalyze = await fetch(
-            "https://fortuna-api.onrender.com/api/gemini/analyze",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-              body: JSON.stringify(resultPreview),
-            }
-          );
-
-          if (responseAnalyze.ok) {
-            const resultAnalyze = await responseAnalyze.json();
-            navigation.navigate("QuestionsGoal", { goalData: resultAnalyze });
-          } else {
-            setResponseMessage("Falha ao analisar os dados da meta.");
+        const responseAnalyze = await fetch(
+          "https://fortuna-api.onrender.com/api/gemini/analyze",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(resultPreview),
           }
-        } catch (error) {
-          console.log(error);
+        );
+
+        if (responseAnalyze.ok) {
+          const resultAnalyze = await responseAnalyze.json();
+          navigation.navigate("QuestionsGoal", { goalData: resultAnalyze });
+        } else {
+          const errorAnalyze = await responseAnalyze.json();
+          throw new AppError(
+            errorAnalyze.message || "Falha ao analisar os dados da meta."
+          );
         }
       } else {
-        setResponseMessage("Falha ao enviar os dados da meta.");
+        const errorPreview = await responsePreview.json();
+        throw new AppError(
+          errorPreview.message || "Falha ao enviar os dados da meta."
+        );
       }
     } catch (error) {
-      setResponseMessage("Ocorreu um erro ao enviar os dados da meta.");
+      setResponseMessage(
+        error instanceof AppError
+          ? error.message
+          : "Ocorreu um erro ao enviar os dados da meta."
+      );
       console.error("Error:", error);
     } finally {
       setLoading(false);
@@ -94,106 +103,164 @@ const GoalCreateScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ backgroundColor: "#fff", flex: 1 }}>
+    <View style={{ flex: 1 }}>
       <Header title="Criar Meta" />
       <ScrollView contentContainerStyle={styles.container}>
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#9a67ea" />
-            <Text style={styles.loadingText}>Analisando Meta...</Text>
+            <Loading title="Analisando meta..." />
           </View>
         ) : (
           <>
             <Text style={styles.label}>Nome:</Text>
-            <TextInput style={styles.input} value={name} onChangeText={setName} />
+            <View style={styles.inputContainer}>
+              <MaterialIcons name="label-outline" size={20} color="#9a67ea" />
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="Digite o nome da meta"
+                placeholderTextColor="#999"
+              />
+            </View>
 
             <View style={styles.switchContainer}>
               <Text style={styles.label}>Tipo de Meta:</Text>
               <Switch
                 value={typeGoal}
                 onValueChange={setTypeGoal}
-                trackColor={{ false: "#767577", true: theme.colors.purple[500] }}
-                thumbColor={typeGoal ? "#fff" : theme.colors.purple[500]}
+                thumbColor={typeGoal ? "#cbb3f7" : "#cfcfcf"} // Cores mais claras para a bolinha
+                trackColor={{
+                  false: "#82778c",
+                  true: theme.colors.purple[500],
+                }}
+                ios_backgroundColor="#82778c"
               />
             </View>
 
             {!typeGoal && (
               <>
                 <Text style={styles.label}>Patrimônio:</Text>
-                <TextInput
-                  style={styles.input}
-                  keyboardType="numeric"
-                  value={String(patrimony)}
-                  onChangeText={(text) => setPatrimony(Number(text))}
-                />
-
-                <Text style={styles.label}>Patrimônio Inicial:</Text>
+                <View style={styles.inputContainer}>
+                  <MaterialIcons
+                    name="attach-money"
+                    size={20}
+                    color="#9a67ea"
+                  />
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    value={String(patrimony)}
+                    onChangeText={(text) => setPatrimony(Number(text))}
+                    placeholder="Digite o valor do patrimônio"
+                    placeholderTextColor="#999"
+                  />
+                </View>
               </>
             )}
 
             {typeGoal && (
               <>
                 <Text style={styles.label}>Dividendos:</Text>
-                <TextInput
-                  style={styles.input}
-                  keyboardType="numeric"
-                  value={String(dividends)}
-                  onChangeText={(text) => setDividends(Number(text))}
-                />
-
-                <Text style={styles.label}>Patrimônio Inicial:</Text>
+                <View style={styles.inputContainer}>
+                  <MaterialIcons name="money" size={20} color="#9a67ea" />
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    value={String(dividends)}
+                    onChangeText={(text) => setDividends(Number(text))}
+                    placeholder="Digite o valor dos dividendos"
+                    placeholderTextColor="#999"
+                  />
+                </View>
               </>
             )}
 
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={String(initialPatrimony)}
-              onChangeText={(text) => setInitialPatrimony(Number(text))}
-            />
+            <Text style={styles.label}>Patrimônio Inicial:</Text>
+            <View style={styles.inputContainer}>
+              <MaterialIcons name="account-balance" size={20} color="#9a67ea" />
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                value={String(initialPatrimony)}
+                onChangeText={(text) => setInitialPatrimony(Number(text))}
+                placeholder="Digite o patrimônio inicial"
+                placeholderTextColor="#999"
+              />
+            </View>
 
             <View style={styles.switchContainer}>
               <Text style={styles.label}>Aporte ou Tempo:</Text>
               <Switch
                 value={timeOrAport}
                 onValueChange={setTimeOrAport}
-                trackColor={{ false: "#767577", true: theme.colors.purple[500] }}
-                thumbColor={timeOrAport ? "#fff" : theme.colors.purple[500]}
+                thumbColor={timeOrAport ? "#cbb3f7" : "#cfcfcf"} // Cores mais claras para a bolinha
+                trackColor={{
+                  false: "#82778c",
+                  true: theme.colors.purple[500],
+                }}
+                ios_backgroundColor="#82778c"
               />
             </View>
 
             {timeOrAport ? (
               <>
                 <Text style={styles.label}>Tempo Desejado (anos):</Text>
-                <TextInput
-                  style={styles.input}
-                  keyboardType="numeric"
-                  value={String(timeDesired)}
-                  onChangeText={(text) => setTimeDesired(Number(text))}
-                />
+                <View style={styles.inputContainer}>
+                  <MaterialIcons name="timer" size={20} color="#9a67ea" />
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    value={String(timeDesired)}
+                    onChangeText={(text) => setTimeDesired(Number(text))}
+                    placeholder="Digite o tempo desejado (anos)"
+                    placeholderTextColor="#999"
+                  />
+                </View>
               </>
             ) : (
               <>
                 <Text style={styles.label}>Aporte Mensal:</Text>
-                <TextInput
-                  style={styles.input}
-                  keyboardType="numeric"
-                  value={String(monthlyAport)}
-                  onChangeText={(text) => setMonthlyAport(Number(text))}
-                />
+                <View style={styles.inputContainer}>
+                  <MaterialIcons
+                    name="calendar-today"
+                    size={20}
+                    color="#9a67ea"
+                  />
+                  <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    value={String(monthlyAport)}
+                    onChangeText={(text) => setMonthlyAport(Number(text))}
+                    placeholder="Digite o aporte mensal"
+                    placeholderTextColor="#999"
+                  />
+                </View>
               </>
             )}
 
             <Text style={styles.label}>Taxa:</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={String(rate)}
-              onChangeText={(text) => setRate(Number(text))}
-            />
+            <View style={styles.inputContainer}>
+              <MaterialIcons name="percent" size={20} color="#9a67ea" />
+              <TextInput
+                style={styles.input}
+                keyboardType="numeric"
+                value={String(rate)}
+                onChangeText={(text) => setRate(Number(text))}
+                placeholder="Digite a taxa"
+                placeholderTextColor="#999"
+              />
+            </View>
 
-            <Button title="Enviar" onPress={handleSubmit} color="#9a67ea" />
-
+            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>Enviar</Text>
+            </TouchableOpacity>
+            {responseMessage ? (
+              <View style={styles.responseContainer}>
+                <Text style={styles.responseLabel}>Resposta:</Text>
+                <Text style={styles.responseText}>{responseMessage}</Text>
+              </View>
+            ) : null}
           </>
         )}
       </ScrollView>
@@ -210,14 +277,22 @@ const styles = StyleSheet.create({
   label: {
     marginVertical: 8,
     fontWeight: "bold",
+    marginRight: 12,
   },
-  input: {
-    height: 40,
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     borderColor: "#9a67ea",
     borderWidth: 2,
-    marginBottom: 12,
-    paddingHorizontal: 8,
     borderRadius: 8,
+    paddingHorizontal: 8,
+    marginBottom: 12,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    paddingHorizontal: 8,
+    color: "#333",
   },
   switchContainer: {
     flexDirection: "row",
@@ -233,6 +308,19 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: "#9a67ea",
+  },
+  button: {
+    backgroundColor: "#9a67ea",
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginBottom: 20,
+    marginTop: 30,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   responseContainer: {
     marginTop: 20,

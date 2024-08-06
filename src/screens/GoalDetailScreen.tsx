@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   metaTitle: {
-    fontSize: 24,
+    fontSize: 21,
     fontWeight: "bold",
     color: "#442c50",
     marginVertical: 12,

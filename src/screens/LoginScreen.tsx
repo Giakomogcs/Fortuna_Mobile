@@ -55,7 +55,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       const userData = authData.user;
       setTokenAndUser(token, userData);
       setResponseMessage("Login realizado com sucesso.");
-      Alert.alert("Sucesso", "Login realizado com sucesso.");
     } catch (error: unknown) {
       const appError =
         error instanceof AppError
@@ -114,7 +113,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f7f7f7",
+    backgroundColor: THEME.colors.background[500],
     alignItems: "center",
     justifyContent: "center",
     padding: 20,

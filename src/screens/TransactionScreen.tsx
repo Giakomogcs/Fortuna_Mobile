@@ -14,6 +14,7 @@ import Header from "../components/HeaderApp";
 import { Text, Divider, useTheme } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Loading } from "../components/Loading";
+import { THEME } from "src/theme";
 
 export interface Goal {
   id: string;
@@ -195,8 +196,8 @@ const TransactionScreen: React.FC<TransactionScreenProps> = ({
             <Switch
               value={aportType}
               onValueChange={setAportType}
-              thumbColor={aportType ? "#b19cd9" : "#cfcfcf"} // Cores mais claras para a bolinha
-              trackColor={{ false: "#82778c", true: "#6e528a" }}
+              thumbColor={aportType ? "#cbb3f7" : "#cfcfcf"} // Cores mais claras para a bolinha
+              trackColor={{ false: "#82778c", true: theme.colors.purple[500] }}
               ios_backgroundColor="#82778c"
             />
           </View>
@@ -218,7 +219,7 @@ const TransactionScreen: React.FC<TransactionScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e5e5e5fc",
+    backgroundColor: THEME.colors.background[500],
     marginTop: 4,
   },
   metaContainer: {
@@ -230,7 +231,7 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   metaTitle: {
-    fontSize: 24,
+    fontSize: 21,
     fontWeight: "bold",
     color: "#442c50",
     marginVertical: 12,
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   submitButton: {
-    backgroundColor: "#6e528a",
+    backgroundColor: THEME.colors.purple[500],
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
