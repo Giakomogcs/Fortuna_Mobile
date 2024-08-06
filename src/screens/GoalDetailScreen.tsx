@@ -493,15 +493,15 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e5e5e5fc",
+    backgroundColor: "#fff",
     marginTop: 4,
   },
   AccordionColor: {
-    backgroundColor: "#e5e5e5fc",
+    backgroundColor: "#fff",
   },
   subtitle: {
     fontSize: 20,
-    color: "#442c50",
+    color: "#d3d3d3",
     marginBottom: 10,
     marginTop: 16,
     paddingHorizontal: 20,

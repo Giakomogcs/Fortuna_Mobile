@@ -94,7 +94,7 @@ const GoalCreateScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#fff", flex: 1 }}>
+    <View style={{ backgroundColor: "#fff", flex: 1 }}>
       <Header title="Criar Meta" />
       <ScrollView contentContainerStyle={styles.container}>
         {loading ? (
@@ -153,7 +153,7 @@ const GoalCreateScreen = ({ navigation }) => {
             />
 
             <View style={styles.switchContainer}>
-              <Text style={styles.label}>Tempo ou Aporte:</Text>
+              <Text style={styles.label}>Aporte ou Tempo:</Text>
               <Switch
                 value={timeOrAport}
                 onValueChange={setTimeOrAport}
@@ -194,16 +194,10 @@ const GoalCreateScreen = ({ navigation }) => {
 
             <Button title="Enviar" onPress={handleSubmit} color="#9a67ea" />
 
-            {responseMessage ? (
-              <View style={styles.responseContainer}>
-                <Text style={styles.responseLabel}>Resposta:</Text>
-                <Text style={styles.responseText}>{responseMessage}</Text>
-              </View>
-            ) : null}
           </>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

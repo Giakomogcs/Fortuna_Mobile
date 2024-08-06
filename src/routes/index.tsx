@@ -12,14 +12,13 @@ const Routes = () => {
   const { colors } = useTheme();
 
   const theme = DefaultTheme;
-  theme.colors.background = colors.gray[700];
 
   if (isLoadingUserStorageData) {
     return <Loading />;
   }
 
   return (
-    <Box flex={1} bg={"gray.700"}>
+    <Box flex={1} bg={theme.colors.background}>
       <NavigationContainer theme={theme}>
         {token ? <AppTabs /> : <AuthRoutes />}
       </NavigationContainer>

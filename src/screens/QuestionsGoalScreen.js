@@ -7,6 +7,7 @@ import {
   ScrollView,
 } from "react-native";
 import { Questions } from "../components/Questions";
+import Header from "../components/HeaderApp";
 
 const QuestionsGoalScreen = ({ route, navigation }) => {
   const { goalData } = route.params;
@@ -26,32 +27,35 @@ const QuestionsGoalScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.summaryContainer}>
-        <Text style={styles.summaryTitle}>Resumo da Meta</Text>
-        <Text style={styles.summaryText}>{goalData.summary}</Text>
-      </View>
-      <View style={styles.formContainer}>
-        <Text style={styles.questionHeader}>
-          Questão {currentQuestionIndex + 1} de {goalData.questions.length}
-        </Text>
-        <Questions question={goalData.questions[currentQuestionIndex]} />
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, styles.yesButton]}
-            onPress={() => handleAnswer(true)}
-          >
-            <Text style={styles.buttonText}>Sim</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, styles.noButton]}
-            onPress={() => handleAnswer(false)}
-          >
-            <Text style={styles.buttonText}>Não</Text>
-          </TouchableOpacity>
+    <View style={styles.Header}>
+      <Header title="Questões" />
+      <ScrollView contentContainerStyle={styles.container}>
+        <View style={styles.summaryContainer}>
+          <Text style={styles.summaryTitle}>Resumo da Meta</Text>
+          <Text style={styles.summaryText}>{goalData.summary}</Text>
         </View>
-      </View>
-    </ScrollView>
+        <View style={styles.formContainer}>
+          <Text style={styles.questionHeader}>
+            Questão {currentQuestionIndex + 1} de {goalData.questions.length}
+          </Text>
+          <Questions question={goalData.questions[currentQuestionIndex]} />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, styles.yesButton]}
+              onPress={() => handleAnswer(true)}
+            >
+              <Text style={styles.buttonText}>Sim</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.button, styles.noButton]}
+              onPress={() => handleAnswer(false)}
+            >
+              <Text style={styles.buttonText}>Não</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
@@ -60,6 +64,9 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: "#fff",
     padding: 20,
+  },
+  Header: {
+    backgroundColor: "#fff",
   },
   summaryContainer: {
     marginBottom: 20,

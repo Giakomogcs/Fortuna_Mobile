@@ -12,7 +12,7 @@ const Tab = createBottomTabNavigator();
 
 const AppRoutes = () => {
   const { sizes, colors } = useTheme();
-  const iconSizes = sizes[6];
+  const iconSizes = sizes[6] || 24;
 
   return (
     <Tab.Navigator
@@ -24,11 +24,11 @@ const AppRoutes = () => {
         tabBarStyle: {
           backgroundColor: colors.gray[700],
           borderTopWidth: 0,
-          height: Platform.OS === "android" ? "auto" : 96,
-          paddingBottom: sizes[10],
-          paddingTop: sizes[6],
+          height: Platform.OS === "android" ? 60 : 96,
+          paddingBottom: Platform.OS === "android" ? 10 : sizes[10],
+          paddingTop: Platform.OS === "android" ? 10 : sizes[6],
         },
-        tabBarIcon: ({ color, size }) => {
+        tabBarIcon: ({ color }) => {
           let iconName: keyof typeof Ionicons.glyphMap;
 
           if (route.name === "Home") {
@@ -38,7 +38,7 @@ const AppRoutes = () => {
           } else if (route.name === "Profile") {
             iconName = "person";
           } else {
-            iconName = "ellipse"; // valor padrão caso a rota não corresponda
+            iconName = "ellipse";
           }
 
           return <Ionicons name={iconName} size={iconSizes} color={color} />;

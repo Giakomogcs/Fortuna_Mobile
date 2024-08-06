@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
-import Header from "../components/HeaderHome";
+import Header from "../components/HeaderApp";
 import Icon from "react-native-vector-icons/Ionicons";
+import { THEME } from "src/theme";
 
 const GoalCreatePlanScreen = ({ route, navigation }) => {
   const { goalId } = route.params;
@@ -110,7 +111,7 @@ const GoalCreatePlanScreen = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: THEME.colors.background,
   },
   subtitle: {
     fontSize: 20,
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   goalsButton: {
-    backgroundColor: "#4CAF50",
+    backgroundColor: THEME.colors.purple[700],
     padding: 15,
     borderRadius: 10,
     alignItems: "center",

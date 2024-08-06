@@ -10,6 +10,7 @@ import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderApp";
 import { Loading } from "../components/Loading";
 import { useFocusEffect } from "@react-navigation/native";
+import { THEME } from "src/theme";
 
 const ListMeta = ({ navigation }) => {
   const [data, setData] = useState([]);
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#fff",
+    backgroundColor: THEME.colors.background,
   },
   goalContainer: {
     backgroundColor: "#f0f0f0",
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     color: "#343a40",
   },
   createButton: {
-    backgroundColor: "#9a67ea",
+    backgroundColor: THEME.colors.purple[700],
     padding: 15,
     borderRadius: 10,
     alignItems: "center",

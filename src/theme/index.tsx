@@ -1,9 +1,13 @@
 import { extendTheme } from "native-base";
+import { background } from "native-base/lib/typescript/theme/styled-system";
 
 export const THEME = extendTheme({
   colors: {
+    background: {
+      500: "#e5e5e5fc",
+    },
     purple: {
-      700: "#431361",
+      700: "#7e22ce",
       500: "#9a67ea",
     },
     gray: {

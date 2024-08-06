@@ -5,6 +5,7 @@ import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TokenContext } from "../hooks/TokenContext";
 import { MaterialIcons } from "@expo/vector-icons";
+import { THEME } from "src/theme";
 
 type HeaderProps = {
   title: string;
@@ -68,7 +69,7 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    backgroundColor: "#9a67ea",
+    backgroundColor: THEME.colors.purple[700],
     width: Dimensions.get("window").width,
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 8,
     paddingVertical: 16,
-    backgroundColor: "#9a67ea",
+    backgroundColor: THEME.colors.purple[700],
     borderBottomLeftRadius: 32,
     borderBottomRightRadius: 32,
   },

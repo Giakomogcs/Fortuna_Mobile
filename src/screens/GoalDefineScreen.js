@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { TokenContext } from "../hooks/TokenContext";
+import Header from "../components/HeaderApp";
 
 const GoalDefineScreen = ({ route, navigation }) => {
   const initialGoalData = route.params;
@@ -85,7 +86,7 @@ const GoalDefineScreen = ({ route, navigation }) => {
   };
 
   const handleRewriteGoal = () => {
-    navigation.navigate("Criando Meta", goalData);
+    navigation.navigate("GoalCreate", goalData);
   };
 
   if (loading) {
@@ -96,72 +97,77 @@ const GoalDefineScreen = ({ route, navigation }) => {
       </View>
     );
   }
-
+  
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Resumo da Meta</Text>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Nome:</Text>
-        <Text style={styles.value}>{goalData.name}</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Tipo de Meta:</Text>
-        <Text style={styles.value}>
-          {goalData.type_goal ? "Dividendo" : "Patrimônio"}
-        </Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Patrimônio Desejado:</Text>
-        <Text style={styles.value}>{goalData.patrimony}</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Dividendos:</Text>
-        <Text style={styles.value}>{goalData.dividends}</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Meu Patrimônio:</Text>
-        <Text style={styles.value}>{goalData.my_patrimony}</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Taxa:</Text>
-        <Text style={styles.value}>{goalData.rate * 100}%</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Tempo Desejado (anos):</Text>
-        <Text style={styles.value}>{goalData.time_desired}</Text>
-      </View>
-      <View style={styles.detailContainer}>
-        <Text style={styles.label}>Aporte Mensal:</Text>
-        <Text style={styles.value}>{goalData.monthly_aport.toFixed(2)}</Text>
-      </View>
-
-      <View style={styles.summaryContainer}>
-        <Text style={styles.label}>Resumo:</Text>
-        <Text style={styles.summary}>{goalData.summary}</Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.createButton}
-          onPress={handleCreateGoal}
-        >
-          <Text style={styles.buttonText}>Criar Meta</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.rewriteButton}
-          onPress={handleRewriteGoal}
-        >
-          <Text style={styles.buttonText}>Reescrever</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <View style={styles.container}>
+      <Header title="Definir meta" />
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.title}>Resumo da Meta</Text>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Nome:</Text>
+          <Text style={styles.value}>{goalData.name}</Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Tipo de Meta:</Text>
+          <Text style={styles.value}>
+            {goalData.type_goal ? "Dividendo" : "Patrimônio"}
+          </Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Patrimônio Desejado:</Text>
+          <Text style={styles.value}>{goalData.patrimony}</Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Dividendos:</Text>
+          <Text style={styles.value}>{goalData.dividends}</Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Meu Patrimônio:</Text>
+          <Text style={styles.value}>{goalData.my_patrimony}</Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Taxa:</Text>
+          <Text style={styles.value}>{goalData.rate * 100}%</Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Tempo Desejado (anos):</Text>
+          <Text style={styles.value}>{goalData.time_desired}</Text>
+        </View>
+        <View style={styles.detailContainer}>
+          <Text style={styles.label}>Aporte Mensal:</Text>
+          <Text style={styles.value}>{goalData.monthly_aport.toFixed(2)}</Text>
+        </View>
+        <View style={styles.summaryContainer}>
+          <Text style={styles.label}>Resumo:</Text>
+          <Text style={styles.summary}>{goalData.summary}</Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.createButton}
+            onPress={handleCreateGoal}
+          >
+            <Text style={styles.buttonText}>Criar Meta</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.rewriteButton}
+            onPress={handleRewriteGoal}
+          >
+            <Text style={styles.buttonText}>Reescrever</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    padding: 20,
+    flex: 1,
     backgroundColor: "#fff",
+  },
+  scrollContainer: {
+    padding: 20,
+    flexGrow: 1,
   },
   title: {
     fontSize: 24,
