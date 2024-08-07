@@ -111,9 +111,6 @@ const SignupScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
 
       const token = loginData.token;
       setTokenAndUser(token, loginData.user);
-
-      // Navegação para a tela FinancialGoals após o sucesso
-      navigation.navigate("FinancialGoals");
     } catch (error) {
       console.error("Erro:", error);
       setResponseMessage("Ocorreu um erro.");

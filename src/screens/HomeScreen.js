@@ -1,5 +1,12 @@
 import React, { useContext, useEffect } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Alert, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Image,
+} from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 import { TokenContext } from "../hooks/TokenContext";
 import Header from "../components/HeaderHome";
@@ -9,29 +16,9 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!user || !user.knowledge || user.knowledge.length === 0) {
-      navigation.navigate("FinancialGoals");
+      //navigation.navigate("FinancialGoals");
     }
   }, [user, navigation]);
-
-  const handleLogout = () => {
-    Alert.alert(
-      "Logout",
-      "Você deseja sair da sua conta?",
-      [
-        {
-          text: "Cancelar",
-          style: "cancel",
-        },
-        {
-          text: "Sim",
-          onPress: () => {
-            logout();
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  };
 
   if (!user) {
     return null;
@@ -44,7 +31,10 @@ const HomeScreen = ({ navigation }) => {
         <Text style={styles.text}>Venha, vamos fazer uma fortuna juntos</Text>
       </View>
       <View style={styles.imageContainer}>
-        <Image source={require('../../assets/Planet.png')} style={styles.image} />
+        <Image
+          source={require("../../assets/Planet.png")}
+          style={styles.image}
+        />
       </View>
     </View>
   );

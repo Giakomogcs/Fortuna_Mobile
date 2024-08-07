@@ -51,7 +51,12 @@ const FinancialGoalsScreen = ({ navigation }) => {
       if (response.ok) {
         const data = await response.json();
         updateUser({ ...user, ...payload });
-        navigation.navigate("Home");
+
+        // Redefine a navegação para garantir que o menu de navegação seja exibido
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Tabs" }],
+        });
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Erro na resposta do servidor");

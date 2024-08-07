@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { HStack, VStack, Text, Icon, Image } from "native-base";
-import { TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { TouchableOpacity, StyleSheet, Dimensions, Alert } from "react-native";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TokenContext } from "../hooks/TokenContext";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -24,6 +24,26 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
   const navigation = useNavigation<NavigationProp<any>>();
   const { user, logout } = useContext(TokenContext);
   const [imageError, setImageError] = useState(false);
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Você deseja sair da sua conta?",
+      [
+        {
+          text: "Cancelar",
+          style: "cancel",
+        },
+        {
+          text: "Sim",
+          onPress: () => {
+            logout();
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -59,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
             <Icon as={MaterialIcons} name="refresh" color="white" size={7} />
           </TouchableOpacity>
         )}
-        <TouchableOpacity onPress={logout} style={styles.logoutButton}>
+        <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
           <MaterialIcons name="logout" size={24} color="#fff" />
         </TouchableOpacity>
       </HStack>

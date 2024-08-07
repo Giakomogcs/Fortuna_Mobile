@@ -53,16 +53,17 @@ const ListMeta = ({ navigation }) => {
   );
 
   const getProgressColor = (progress) => {
-    if (progress <= 0.25) return '#777'; // Cinza escuro
-    if (progress <= 0.75) return '#ffc107'; // Amarelo
-    return '#28a745'; // Verde
+    if (progress <= 0.25) return "#777"; // Cinza escuro
+    if (progress <= 0.75) return "#ffc107"; // Amarelo
+    return "#28a745"; // Verde
   };
 
   const renderGoal = ({ item }) => {
-    const progress = item.patrimony > 0 ? item.my_patrimony / item.patrimony : 0;
+    const progress =
+      item.patrimony > 0 ? item.my_patrimony / item.patrimony : 0;
     const progressColor = getProgressColor(progress);
 
-    console.log(`Goal: ${item.name}, Progress: ${progress}`); // Debugging line
+    //console.log(`Goal: ${item.name}, Progress: ${progress}`); // Debugging line
 
     return (
       <TouchableOpacity
@@ -88,10 +89,17 @@ const ListMeta = ({ navigation }) => {
           </View>
           <View style={styles.goalDetails}>
             <Text style={styles.label}>Tempo Desejado:</Text>
-            <Text style={styles.value}>{item.time_desired.toFixed(1)} anos</Text>
+            <Text style={styles.value}>
+              {item.time_desired.toFixed(1)} anos
+            </Text>
           </View>
           <View style={styles.progressBarContainer}>
-            <View style={[styles.progressBar, { width: `${progress * 100}%`, backgroundColor: progressColor }]} />
+            <View
+              style={[
+                styles.progressBar,
+                { width: `${progress * 100}%`, backgroundColor: progressColor },
+              ]}
+            />
           </View>
         </View>
       </TouchableOpacity>
@@ -102,22 +110,27 @@ const ListMeta = ({ navigation }) => {
     navigation.navigate("GoalCreate");
   };
 
+  const renderEmptyList = () => (
+    <View style={styles.emptyContainer}>
+      <Text style={styles.emptyText}>Você ainda não tem nenhuma meta</Text>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      <Header title="Lista da Meta" onRefresh={fetchData} />
+      <Header title="Lista da Metas" onRefresh={fetchData} />
 
       {loading ? (
         <Loading title="Carregando metas..." />
       ) : (
         <FlatList
-          style={{
-            marginTop: 10,
-            width: "90%",
-            alignContent: "center",
-            marginLeft: 30,
-          }}
+          contentContainerStyle={
+            data.length === 0 ? styles.emptyFlatList : null
+          }
+          style={styles.flatList}
           data={data}
           renderItem={renderGoal}
+          ListEmptyComponent={renderEmptyList}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item.id.toString()}
         />
@@ -134,6 +147,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: THEME.colors.background,
+  },
+  flatList: {
+    marginTop: 10,
+    width: "90%",
+    alignContent: "center",
+    marginLeft: 30,
+  },
+  emptyFlatList: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   goalContainer: {
     backgroundColor: "#f0f0f0",
@@ -193,6 +217,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  emptyText: {
+    fontSize: 18,
+    color: "#6c757d",
+    textAlign: "center",
   },
 });
 

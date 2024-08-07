@@ -68,12 +68,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    if (token) {
-      navigation.navigate("Home");
-    }
-  }, [token, navigation]);
-
   return (
     <View style={styles.container}>
       <Image source={require("../../assets/logo.png")} style={styles.logo} />
