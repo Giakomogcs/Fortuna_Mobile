@@ -67,7 +67,7 @@ const UserEditScreen = ({ navigation }) => {
           knowledge.fixed_income ? parseFloat(knowledge.fixed_income) * 100 : 0
         );
         setProfilePicture(contextUser.picture);
-        if (contextUser.picture) {
+        if (contextUser.picture && contextUser.picture.trim() !== "") {
           fetchProfileImage(contextUser.picture);
         }
         setLoading(false);

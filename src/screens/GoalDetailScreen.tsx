@@ -197,9 +197,7 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
 
   useFocusEffect(
     useCallback(() => {
-      if (!updatedGoalData) {
-        fetchGoalData();
-      }
+      fetchGoalData();
     }, [goalId, token, updatedGoalData])
   );
 

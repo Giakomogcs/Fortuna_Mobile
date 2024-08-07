@@ -16,7 +16,7 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     if (!user || !user.knowledge || user.knowledge.length === 0) {
-      //navigation.navigate("FinancialGoals");
+      navigation.navigate("FinancialGoals");
     }
   }, [user, navigation]);
 

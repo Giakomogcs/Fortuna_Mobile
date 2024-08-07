@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -19,9 +19,19 @@ const FinancialGoalsScreen = ({ navigation }) => {
   const [salary, setSalary] = useState("");
   const [variableIncome, setVariableIncome] = useState(0);
   const [fixedIncome, setFixedIncome] = useState(0);
-  const { token, user, updateUser } = useContext(TokenContext);
   const [loading, setLoading] = useState(false);
   const [responseMessage, setResponseMessage] = useState("");
+  const { token, user, updateUser } = useContext(TokenContext);
+
+  useEffect(() => {
+    if (!loading && user && user.knowledge && user.knowledge.length !== 0) {
+      // Redefine a navegação para garantir que o menu de navegação seja exibido
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Tabs" }],
+      });
+    }
+  }, [loading, user]);
 
   const handleConfirm = async () => {
     const payload = {
@@ -51,12 +61,7 @@ const FinancialGoalsScreen = ({ navigation }) => {
       if (response.ok) {
         const data = await response.json();
         updateUser({ ...user, ...payload });
-
-        // Redefine a navegação para garantir que o menu de navegação seja exibido
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Tabs" }],
-        });
+        setResponseMessage("Dados atualizados com sucesso.");
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Erro na resposta do servidor");
