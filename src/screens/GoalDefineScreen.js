@@ -104,7 +104,8 @@ const GoalDefineScreen = ({ route, navigation }) => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <Loading title="Definindo meta..." />
+        <ActivityIndicator size="large" color={THEME.colors.purple[500]} />
+        <Text style={styles.loadingText}>Definindo meta...</Text>
       </View>
     );
   }

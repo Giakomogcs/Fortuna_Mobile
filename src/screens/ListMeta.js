@@ -52,35 +52,51 @@ const ListMeta = ({ navigation }) => {
     }, [token])
   );
 
-  const renderGoal = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("GoalDetail", { goalId: item.id })}
-    >
-      <View style={styles.goalContainer}>
-        <Text style={styles.goalName}>{item.name}</Text>
-        <View style={styles.goalDetails}>
-          <Text style={styles.label}>Patrimônio Atual:</Text>
-          <Text style={styles.value}>R${item.patrimony}</Text>
+  const getProgressColor = (progress) => {
+    if (progress <= 0.25) return '#777'; // Cinza escuro
+    if (progress <= 0.75) return '#ffc107'; // Amarelo
+    return '#28a745'; // Verde
+  };
+
+  const renderGoal = ({ item }) => {
+    const progress = item.patrimony > 0 ? item.my_patrimony / item.patrimony : 0;
+    const progressColor = getProgressColor(progress);
+
+    console.log(`Goal: ${item.name}, Progress: ${progress}`); // Debugging line
+
+    return (
+      <TouchableOpacity
+        onPress={() => navigation.navigate("GoalDetail", { goalId: item.id })}
+      >
+        <View style={styles.goalContainer}>
+          <Text style={styles.goalName}>{item.name}</Text>
+          <View style={styles.goalDetails}>
+            <Text style={styles.label}>Patrimônio Atual:</Text>
+            <Text style={styles.value}>R${item.patrimony}</Text>
+          </View>
+          <View style={styles.goalDetails}>
+            <Text style={styles.label}>Meu Patrimônio:</Text>
+            <Text style={styles.value}>R${item.my_patrimony}</Text>
+          </View>
+          <View style={styles.goalDetails}>
+            <Text style={styles.label}>Dividendos Atuais:</Text>
+            <Text style={styles.value}>R${item.dividends}</Text>
+          </View>
+          <View style={styles.goalDetails}>
+            <Text style={styles.label}>Aporte Mensal:</Text>
+            <Text style={styles.value}>R${item.monthly_aport.toFixed(2)}</Text>
+          </View>
+          <View style={styles.goalDetails}>
+            <Text style={styles.label}>Tempo Desejado:</Text>
+            <Text style={styles.value}>{item.time_desired.toFixed(1)} anos</Text>
+          </View>
+          <View style={styles.progressBarContainer}>
+            <View style={[styles.progressBar, { width: `${progress * 100}%`, backgroundColor: progressColor }]} />
+          </View>
         </View>
-        <View style={styles.goalDetails}>
-          <Text style={styles.label}>Meu Patrimônio:</Text>
-          <Text style={styles.value}>R${item.my_patrimony}</Text>
-        </View>
-        <View style={styles.goalDetails}>
-          <Text style={styles.label}>Dividendos Atuais:</Text>
-          <Text style={styles.value}>R${item.dividends}</Text>
-        </View>
-        <View style={styles.goalDetails}>
-          <Text style={styles.label}>Aporte Mensal:</Text>
-          <Text style={styles.value}>R${item.monthly_aport.toFixed(2)}</Text>
-        </View>
-        <View style={styles.goalDetails}>
-          <Text style={styles.label}>Tempo Desejado:</Text>
-          <Text style={styles.value}>{item.time_desired.toFixed(1)} anos</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const handleCreateGoal = () => {
     navigation.navigate("GoalCreate");
@@ -154,6 +170,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "400",
     color: "#343a40",
+  },
+  progressBarContainer: {
+    height: 10,
+    backgroundColor: "#e0e0e0",
+    borderRadius: 5,
+    marginTop: 10,
+    overflow: "hidden",
+  },
+  progressBar: {
+    height: "100%",
   },
   createButton: {
     backgroundColor: THEME.colors.purple[700],
