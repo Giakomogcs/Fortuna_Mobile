@@ -74,7 +74,11 @@ const GoalCreatePlanScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Header title="Plano de Ação" onRefresh={fetchGoalData} />
+      <Header
+        title="Plano de Ação"
+        onRefresh={fetchGoalData}
+        showBackButton={false}
+      />
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.sectionContainer}>
           <Icon name="flag" size={24} color={THEME.colors.purple[500]} />

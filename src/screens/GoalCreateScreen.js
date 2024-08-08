@@ -26,7 +26,7 @@ const GoalCreateScreen = ({ navigation }) => {
   const [initialPatrimony, setInitialPatrimony] = useState(0);
   const [timeDesired, setTimeDesired] = useState(0); // anos
   const [monthlyAport, setMonthlyAport] = useState(0);
-  const [rate, setRate] = useState(1); // Display rate as a percentage string
+  const [rate, setRate] = useState("1"); // Display rate as a percentage string
   const [dividends, setDividends] = useState(0);
   const [timeOrAport, setTimeOrAport] = useState(false); // Novo switch
   const [responseMessage, setResponseMessage] = useState("");
@@ -46,11 +46,6 @@ const GoalCreateScreen = ({ navigation }) => {
       monthly_aport: timeOrAport ? 0 : monthlyAport,
       rate: formattedRate / 100, // Convert rate to decimal before sending
     };
-
-    console.log(goalData);
-    console.log(rate);
-    console.log(formattedRate);
-    console.log(goalData.rate);
 
     setLoading(true);
 

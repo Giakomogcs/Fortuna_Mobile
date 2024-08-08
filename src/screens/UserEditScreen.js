@@ -401,9 +401,12 @@ const UserEditScreen = ({ navigation }) => {
         </View>
       </ScrollView>
       <TouchableOpacity
-        style={styles.button}
+        style={[
+          styles.button,
+          (loading || imageLoading) && styles.buttonDisabled,
+        ]}
         onPress={handleUpdate}
-        disabled={loading}
+        disabled={loading || imageLoading}
       >
         {loading ? (
           <Loading title="Carregando..." />
@@ -411,6 +414,7 @@ const UserEditScreen = ({ navigation }) => {
           <Text style={styles.buttonText}>Atualizar</Text>
         )}
       </TouchableOpacity>
+
       {responseMessage ? (
         <Text style={styles.responseMessage}>{responseMessage}</Text>
       ) : null}

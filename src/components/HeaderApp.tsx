@@ -10,9 +10,14 @@ import { THEME } from "src/theme";
 type HeaderProps = {
   title: string;
   onRefresh?: () => void;
+  showBackButton?: boolean;
 };
 
-const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
+const Header: React.FC<HeaderProps> = ({
+  title,
+  onRefresh,
+  showBackButton = true,
+}) => {
   const navigation = useNavigation<NavigationProp<any>>();
   const { token } = useContext(TokenContext);
 
@@ -31,14 +36,16 @@ const Header: React.FC<HeaderProps> = ({ title, onRefresh }) => {
         height={12}
         px={4}
       >
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon
-            as={MaterialIcons}
-            name="arrow-back"
-            color={THEME.colors.white}
-            size={7}
-          />
-        </TouchableOpacity>
+        {showBackButton && (
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Icon
+              as={MaterialIcons}
+              name="arrow-back"
+              color={THEME.colors.white}
+              size={7}
+            />
+          </TouchableOpacity>
+        )}
         <Text
           color={THEME.colors.white}
           fontSize="xl"
