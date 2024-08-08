@@ -167,7 +167,10 @@ const UserEditScreen = ({ navigation }) => {
 
       setResponseMessage("Dados atualizados com sucesso.");
 
-      navigation.navigate("Home");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Tabs" }],
+      });
     } catch (error) {
       console.error("Error updating user:", error);
       setResponseMessage("Ocorreu um erro.");
