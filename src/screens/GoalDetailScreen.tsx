@@ -226,6 +226,17 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
     ));
   };
 
+  const formatCurrency = (value: any) => {
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+  };
+
+  const formatPercentage = (value: any) => {
+    return `${(parseFloat(value) * 100).toFixed(2)}%`;
+  };
+
   return (
     <View style={styles.container}>
       <Header title="Detalhes da Meta" onRefresh={fetchGoalData} />
@@ -238,29 +249,37 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
 
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Patrimônio:</Text>
-            <Text style={styles.metaValue}>{goalData.patrimony}</Text>
+            <Text style={styles.metaValue}>
+              {formatCurrency(goalData.patrimony)}
+            </Text>
           </View>
 
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Meu Patrimônio:</Text>
-            <Text style={styles.metaValue}>{goalData.my_patrimony}</Text>
+            <Text style={styles.metaValue}>
+              {formatCurrency(goalData.my_patrimony)}
+            </Text>
           </View>
 
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Aporte Mensal:</Text>
             <Text style={styles.metaValue}>
-              {goalData.monthly_aport.toFixed(2)}
+              {formatCurrency(goalData.monthly_aport)}
             </Text>
           </View>
 
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Dividendos:</Text>
-            <Text style={styles.metaValue}>{goalData.dividends}</Text>
+            <Text style={styles.metaValue}>
+              {formatCurrency(goalData.dividends)}
+            </Text>
           </View>
 
           <View style={styles.metaItem}>
             <Text style={styles.metaLabel}>Rendimento:</Text>
-            <Text style={styles.metaValue}>{goalData.rate}</Text>
+            <Text style={styles.metaValue}>
+              {formatPercentage(goalData.rate)}
+            </Text>
           </View>
 
           <View style={styles.metaItem}>
@@ -275,7 +294,7 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
 
         <View style={styles.highlightContainer}>
           <Text style={styles.highlightText}>
-            Aporte Necessário: R$ {goalData.monthly_aport.toFixed(2)}
+            Aporte Necessário: {formatCurrency(goalData.monthly_aport)}
           </Text>
           <Text style={styles.highlightText}>
             Tempo Estimado: {timeRemaining} anos
@@ -440,12 +459,12 @@ const GoalDetailScreen: React.FC<GoalDetailScreenProps> = ({
                   : "N/A"}
               </Text>
               <Text style={styles.text}>
-                Renda: {planning.current_situation.income}
+                Renda: {formatCurrency(planning.current_situation.income)}
               </Text>
               <Text style={styles.text}>
                 Poupança:{" "}
                 {planning.current_situation.savings
-                  ? planning.current_situation.savings
+                  ? formatCurrency(planning.current_situation.savings)
                   : "N/A"}
               </Text>
             </List.Accordion>
@@ -492,7 +511,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    marginTop: 4,
   },
   AccordionColor: {
     backgroundColor: "#fff",
